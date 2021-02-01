@@ -1,0 +1,9 @@
+-cp src
+-cp test
+
+-lib blok.core
+-lib blok.core.html
+
+-main Run
+
+-js dist/test.js

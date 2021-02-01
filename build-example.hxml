@@ -1,0 +1,13 @@
+-cp src
+-cp examples
+
+-lib blok.core
+-lib blok.core.html
+
+-main todomvc.TodoMvc
+
+-dce full
+-D analyzer-optimize
+-D js-es=6
+
+-js dist/todomvc/app.js
