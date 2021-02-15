@@ -66,8 +66,7 @@ class Model implements State {
       new Model(cast raw);
     }
 
-    save(model);
-    model.getChangeSignal().add(save);
+    model.getObservable().observe(save);
     
     return model;
   }
