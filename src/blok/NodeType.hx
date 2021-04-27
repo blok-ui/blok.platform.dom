@@ -4,6 +4,7 @@ import haxe.ds.Map;
 import js.Browser;
 import js.html.Node;
 import blok.core.ObjectTools;
+import blok.core.html.HtmlBaseProps;
 
 class NodeType<Attrs:{}> {
   static var types:Map<String, NodeType<Dynamic>> = [];
@@ -50,11 +51,7 @@ class NodeType<Attrs:{}> {
     this.isSvg = isSvg;
   }
 
-  public function create(props:{
-    attrs:Attrs,
-    ?children:Array<VNode>,
-    ?ref:(node:Node)->Void
-  }) {
+  public function create(props:HtmlChildrenProps<Attrs, Node>) {
     var node = isSvg 
       ? Browser.document.createElementNS('', tag) // todo
       : Browser.document.createElement(tag);
@@ -72,11 +69,7 @@ class NodeType<Attrs:{}> {
     return component;
   }
 
-  public function update(component:NativeComponent<Attrs>, props:{
-    attrs:Attrs,
-    ?children:Array<VNode>,
-    ?ref:(node:Node)->Void
-  }) {
+  public function update(component:NativeComponent<Attrs>, props:HtmlChildrenProps<Attrs, Node>) {
     ObjectTools.diffObject(
       component.attributes,
       props.attrs, 

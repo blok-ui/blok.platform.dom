@@ -6,7 +6,6 @@ import blok.core.Differ;
 import blok.core.DefaultScheduler;
 import blok.core.Scheduler;
 import blok.core.Rendered;
-import blok.exception.BlokException;
 
 class DomEngine implements Engine {
   final scheduler:Scheduler;
