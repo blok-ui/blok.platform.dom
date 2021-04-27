@@ -16,7 +16,7 @@ class TodoMvc {
   static function main() {
     Platform.mount(
       js.Browser.document.getElementById('root'),
-      ctx -> Root.node({ model: Model.load() })
+      Root.node({ model: Model.load() })
     );
   }
 }
@@ -184,7 +184,7 @@ class Model implements State {
 class Root extends Component {
   @prop var model:Model;
 
-  override function render(context:Context):VNode {
+  public function render():VNode {
     return Html.div({
       attrs: {
         className: 'todomvc-wrapper'
@@ -195,8 +195,8 @@ class Root extends Component {
             className: 'todoapp'
           },
           children: [
-            Provider.provide(model, ctx -> Html.fragment([
-              ViewInput.node({ task: Model.from(ctx).field }),
+            Provider.provide(model, context -> Html.fragment([
+              ViewInput.node({ task: Model.from(context).field }),
               ViewEntries.node({}),
               ViewControls.node({})
             ]))
@@ -214,40 +214,42 @@ class ViewInput extends Component {
   @prop var task:String;
   var ref:js.html.InputElement;
 
-  override function render(context:Context):VNode {
+  public function render():VNode {
     return Html.header({
       attrs: {
         className: 'header'
       },
       children: [
-        Html.h1({ children: [ Html.text('todos') ] }),
-        Html.input({
-          ref: el -> ref = cast el,
-          attrs: {
-            className: 'new-todo',
-            placeholder: 'What needs doing?',
-            autofocus: true,
-            value: task,
-            oninput: e -> {
-              Model.from(context).updateField(ref.value);
-            },
-            onkeydown: e -> {
-              var ev:js.html.KeyboardEvent = cast e;
-              if (ev.key == 'Enter') {
-                ref.value = '';
-                Model.from(context).add();
+        Context.use(context -> Html.fragment([
+          Html.h1({ children: [ Html.text('todos') ] }),
+          Html.input({
+            ref: el -> ref = cast el,
+            attrs: {
+              className: 'new-todo',
+              placeholder: 'What needs doing?',
+              autofocus: true,
+              value: task,
+              oninput: e -> {
+                Model.from(context).updateField(ref.value);
+              },
+              onkeydown: e -> {
+                var ev:js.html.KeyboardEvent = cast e;
+                if (ev.key == 'Enter') {
+                  ref.value = '';
+                  Model.from(context).add();
+                }
               }
             }
-          }
-        })
+          })
+        ]))
       ]
     });
   }
 }
 
 class ViewEntries extends Component {
-  override function render(context:Context):VNode {
-    return Model.observe(context, model -> {
+  public function render():VNode {
+    return Model.use(model -> {
       var allCompleted = model.entries.filter(e -> !e.completed).length == 0;
 
       Html.section({
@@ -277,7 +279,10 @@ class ViewEntries extends Component {
               className: 'todo-list'
             },
             children: [ for (entry in model.getVisibleEntries()) 
-              ViewEntry.node({ entry: entry })
+              // Note the second argument here -- this is the component's
+              // key, which ensures we maintain the correct order for our
+              // components.
+              ViewEntry.node({ entry: entry }, entry.id)
             ]
           })
         ]
@@ -301,7 +306,7 @@ class ViewEntry extends Component {
     if (entry.editing) ref.focus();
   }
 
-  override function render(context:Context):VNode {
+  public function render():VNode {
     return Html.li({
       key: entry.id,
       attrs: {
@@ -361,8 +366,8 @@ class ViewEntry extends Component {
 }
 
 class ViewControls extends Component {
-  override function render(context:Context):VNode {
-    return Model.observe(context, model -> {
+  public function render():VNode {
+    return Model.use(model -> {
       var entriesCompleted = model.entries.filter(e -> e.completed).length;
       var entriesLeft = model.entries.length - entriesCompleted;
       return Html.footer({

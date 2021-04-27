@@ -1,18 +1,13 @@
 package blok.dom;
 
-import js.html.Node;
 import js.html.Element;
-import blok.core.VNode;
-import blok.core.Differ;
+import blok.VNode;
 
 class Platform {
-  inline public static function createContext(?plugins) {
-    return new blok.core.Context(new Engine());
-  }
-
-  public static function mount(el:Element, factory:(context:Context)->VNode<Node>) {
-    el.innerHTML = '';
-    var context = createContext();
-    Differ.renderWithSideEffects(cast el, [ factory(context) ], null, context);
+  public static function mount(el:Element, child:VNode) {
+    var engine = new DomEngine();
+    var root = new NativeComponent(cast el, { children: [ child ] });
+    root.initializeRootComponent(engine);
+    return root;
   }
 }

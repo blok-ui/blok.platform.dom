@@ -1,6 +1,6 @@
 package blok;
 
-import blok.core.Key;
+import blok.Key;
 
 @:build(blok.core.html.HtmlBuilder.build('blok.core.html.HtmlTags', (_:js.html.Node)))
 class Html {
@@ -9,6 +9,6 @@ class Html {
   }
 
   public static inline function text(content:String, ?key:Key):VNode {
-    return VNative(TextType, { content: content }, null, key, []);
+    return VComponent(TextType, { content: content }, key);
   }
 }
