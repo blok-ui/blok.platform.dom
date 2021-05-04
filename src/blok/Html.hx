@@ -2,7 +2,11 @@ package blok;
 
 import blok.Key;
 
-@:build(blok.core.html.HtmlBuilder.build('blok.core.html.HtmlTags', (_:js.html.Node)))
+@:build(blok.core.html.HtmlBuilder.build(
+  'blok.core.html.HtmlTags', 
+  'blok.NodeType',
+  (_:js.html.Node)
+))
 class Html {
   public static inline function fragment(children:Array<VNode>):VNode {
     return VFragment(children);
