@@ -6,6 +6,7 @@ import blok.core.Differ;
 import blok.core.DefaultScheduler;
 import blok.core.Scheduler;
 import blok.core.Rendered;
+import blok.exception.*;
 
 class DomEngine implements Engine {
   final scheduler:Scheduler;
@@ -21,7 +22,12 @@ class DomEngine implements Engine {
         result;
       case native if (!(native.node is Text)):
         var result = Differ.initialize(component.__doRenderLifecycle(), this, component);
-        setChildren(0, new Cursor(native.node, native.node.firstChild), result);
+        setChildren(
+          0,
+          new Cursor(native.node, native.node.firstChild),
+          result,
+          component
+        );
         result;
       case _:
         new Rendered();
@@ -33,18 +39,35 @@ class DomEngine implements Engine {
       case null:
         var previousCount = 0;
         var first:Node = null;
-        var currentNodes = getNodesFromRendered(component.__renderedChildren);
-        for (node in currentNodes) {
+        var before = component.__renderedChildren;
+        var result = Differ.diff(doRenderAndEnsurePlaceholder(component), this, component, before);
+
+        for (node in getNodesFromRendered(before)) {
           if (first == null) first = node;
           previousCount++;
         }
-        var result = Differ.diff(doRenderAndEnsurePlaceholder(component), this, component, component.__renderedChildren);
-        setChildren(previousCount, new Cursor(first.parentNode, first), result);
+
+        if (first == null) {
+          trace(Type.getClassName(Type.getClass(component)));
+        }
+        
+        setChildren(
+          previousCount, 
+          new Cursor(first.parentNode, first),
+          result,
+          component
+        );
+
         result;
       case native:
         var previousCount = native.node.childNodes.length;
         var result = Differ.diff(component.__doRenderLifecycle(), this, component, component.__renderedChildren);
-        setChildren(previousCount, new Cursor(native.node, native.node.firstChild), result);
+        setChildren(
+          previousCount, 
+          new Cursor(native.node, native.node.firstChild),
+          result,
+          component
+        );
         result;
     }
   }
@@ -67,28 +90,35 @@ class DomEngine implements Engine {
   function setChildren(
     previousCount:Int,
     cursor:Cursor,
-    rendered:Rendered
+    rendered:Rendered,
+    component:Component // for debugging
   ) {
-    var insertedCount = 0;
-    var currentCount = 0;
-    var nodes = getNodesFromRendered(rendered);
+    try {
+      var insertedCount = 0;
+      var currentCount = 0;
+      var nodes = getNodesFromRendered(rendered);
 
-    for (node in nodes) {
-      currentCount++;
-      if (node == cursor.current()) cursor.step();
-      else if (cursor.insert(node)) insertedCount++;
-    }
+      for (node in nodes) {
+        currentCount++;
+        if (node == cursor.current()) cursor.step();
+        else if (cursor.insert(node)) insertedCount++;
+      }
 
-    var deleteCount = previousCount + insertedCount - currentCount;
-    
-    for (i in 0...deleteCount) {
-      if (!cursor.delete()) break;
+      var deleteCount = previousCount + insertedCount - currentCount;
+      
+      for (i in 0...deleteCount) {
+        if (!cursor.delete()) break;
+      }
+    } catch (e:BlokException) {
+      throw e;
+    } catch (e) {
+      throw new WrappedException(e, component);
     }
   }
 
   function doRenderAndEnsurePlaceholder(component:Component):VNode {
     return switch component.__doRenderLifecycle() {
-      case null | None | VFragment([]): VComponent(TextType, { content: '' });
+      case null | VNone | VFragment([]): VComponent(TextType, { content: '' });
       case vn: vn;
     }
   }
