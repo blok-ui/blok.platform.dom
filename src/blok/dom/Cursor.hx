@@ -3,6 +3,14 @@ package blok.dom;
 import js.html.Node;
 
 class Cursor {
+  public static inline function traverseSiblings(first:Node):Cursor {
+    return new Cursor(first.parentNode, first);
+  }
+
+  public static inline function traverseChildren(parent:Node):Cursor {
+    return new Cursor(parent, parent.firstChild);
+  }
+
   final parent:Node;
   var currentNode:Node;
 

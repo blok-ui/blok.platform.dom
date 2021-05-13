@@ -10,4 +10,9 @@ class Platform {
     root.initializeRootComponent(engine);
     return root;
   }
+
+  public static function hydrate(el:Element, child:VNode) {
+    var engine = new DomEngine();
+    return engine.hydrate(el, child);
+  }
 }
