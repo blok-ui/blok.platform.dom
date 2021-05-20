@@ -23,17 +23,6 @@ class NativeComponent<Attrs> extends Component {
     if (ref != null) ref(node);
   }
 
-  @dispose
-  function removeNode() {
-    if (__parent is NativeComponent) {
-      return;
-    }
-    if (node.parentNode != null) {
-      trace('removing manually');
-      node.parentNode.removeChild(node);
-    }
-  }
-
   override function shouldComponentUpdate():Bool {
     return shouldUpdate;
   }
@@ -41,8 +30,7 @@ class NativeComponent<Attrs> extends Component {
   public function isComponentType(type:ComponentType<Dynamic, Dynamic>) {
     return switch Std.downcast(type, NodeType) {
       case null: false;
-      case type:
-        return node.nodeName.toLowerCase() == type.tag;
+      case type: node.nodeName.toLowerCase() == type.tag;
     }
   }
 
