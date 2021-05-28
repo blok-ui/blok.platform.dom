@@ -5,8 +5,8 @@ import blok.VNode;
 
 class Platform {
   public static function mount(el:Element, child:VNode) {
-    var root = new NativeComponent(cast el, { children: [ child ] });
-    root.initializeRootComponent(DomDiffer.create());
+    var root = new NativeComponent(VNative.getTypeForNode(el), cast el, { children: [ child ] });
+    root.initializeRootComponent(new DomDiffer());
     return root;
   }
 

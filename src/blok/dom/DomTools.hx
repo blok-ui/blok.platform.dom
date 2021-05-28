@@ -47,7 +47,7 @@ class DomTools {
 
   public static function updateNodeAttribute(node:Node, name:String, oldValue:Dynamic, newValue:Dynamic):Void {
     var el:Element = cast node;
-    var isSvg = el.namespaceURI == NodeType.SVG_NS;
+    var isSvg = el.namespaceURI == VNative.SVG_NS;
     switch name {
       case 'className':
         updateNodeAttribute(node, 'class', oldValue, newValue);

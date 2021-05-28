@@ -4,15 +4,15 @@ import blok.Key;
 
 @:build(blok.core.html.HtmlBuilder.build(
   'blok.core.html.HtmlTags', 
-  'blok.NodeType',
+  'blok.VNative',
   (_:js.html.Node)
 ))
 class Html {
   public static inline function fragment(children:Array<VNode>):VNode {
-    return VFragment(children);
+    return new VFragment(children);
   }
 
   public static inline function text(content:String, ?key:Key):VNode {
-    return VComponent(TextType, { content: content }, key);
+    return new VText({ content: content }, key);
   }
 }

@@ -6,24 +6,18 @@ import js.html.Text;
 using blok.dom.Cursor;
 using blok.dom.DomTools;
 
-class DomDiffer {
-  static public function create() {
-    return new Differ({
-      createPlaceholder: createPlaceholder,
-      onInitialize: initializeComponent,
-      onUpdate: updateComponent,
-    });
-  }
-
-  static function createPlaceholder(parent:Component) {
-    return if (parent is NativeComponent) 
-      null 
+class DomDiffer extends Differ {
+  override function patchComponent(component:Component, vnodes:Array<VNode>, isInit:Bool) {
+    var previous = component.getChildComponents().copy();
+    diffChildren(component, vnodes);
+    if (isInit) 
+      initRealNodes(component) 
     else 
-      TextType.create({ content: '' });
+      updateRealNodes(component, previous);
   }
 
-  static function initializeComponent(component:Component) {
-    return switch Std.downcast(component, NativeComponent) {
+  public function initRealNodes(component:Component) {
+    switch Std.downcast(component, NativeComponent) {
       case null:
       case native if (!(native.node is Text)):
         DomTools.setChildren(
@@ -36,7 +30,7 @@ class DomDiffer {
     }
   }
 
-  static function updateComponent(component:Component, previous:Array<Component>) {
+  public function updateRealNodes(component:Component, previous:Array<Component>) {
     switch Std.downcast(component, NativeComponent) {
       case null:
         var previousCount = 0;
