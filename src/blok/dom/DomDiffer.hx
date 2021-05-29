@@ -16,21 +16,25 @@ class DomDiffer extends Differ {
       updateRealNodes(component, previous);
   }
 
-  public function initRealNodes(component:Component) {
+  override function getPlaceholder():Null<VNode> {
+    return Html.text('');
+  }
+
+  static function initRealNodes(component:Component) {
     switch Std.downcast(component, NativeComponent) {
       case null:
       case native if (!(native.node is Text)):
         DomTools.setChildren(
           0,
           native.node.traverseChildren(),
-          native.getChildComponents(),
+          native.getChildComponents().getNodesFromComponents(),
           native
         );
       default:
     }
   }
 
-  public function updateRealNodes(component:Component, previous:Array<Component>) {
+  static function updateRealNodes(component:Component, previous:Array<Component>) {
     switch Std.downcast(component, NativeComponent) {
       case null:
         var previousCount = 0;
@@ -49,14 +53,14 @@ class DomDiffer extends Differ {
         DomTools.setChildren(
           previousCount,
           first.traverseSiblings(),
-          component.getChildComponents(),
+          component.getChildComponents().getNodesFromComponents(),
           component
         );
       case native:
         DomTools.setChildren(
           native.node.childNodes.length, 
           native.node.traverseChildren(), 
-          native.getChildComponents(), 
+          native.getChildComponents().getNodesFromComponents(), 
           native
         );
     }

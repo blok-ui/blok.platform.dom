@@ -185,25 +185,15 @@ class Root extends Component {
   @prop var model:Model;
 
   public function render():VNode {
-    return Html.div({
-      attrs: {
-        className: 'todomvc-wrapper'
-      },
-      children: [
-        Html.section({
-          attrs: {
-            className: 'todoapp'
-          },
-          children: [
-            Provider.provide(model, context -> Html.fragment([
-              ViewInput.node({ task: Model.from(context).field }),
-              ViewEntries.node({}),
-              ViewControls.node({})
-            ]))
-          ]
-        })
-      ]
-    });
+    return Html.div({ className: 'todomvc-wrapper' },
+      Html.section({ className: 'todoapp' },
+        Provider.provide(model, context -> Html.fragment(
+          ViewInput.node({ task: Model.from(context).field }),
+          ViewEntries.node({}),
+          ViewControls.node({})
+        ))
+      )
+    );
   }
 }
 
@@ -215,35 +205,29 @@ class ViewInput extends Component {
   var ref:js.html.InputElement;
 
   public function render():VNode {
-    return Html.header({
-      attrs: {
-        className: 'header'
-      },
-      children: [
-        Context.use(context -> Html.fragment([
-          Html.h1({ children: [ Html.text('todos') ] }),
+    return Html.header({ className: 'header' },
+        Context.use(context -> Html.fragment(
+          Html.h1({}, Html.text('todos')),
           Html.input({
             ref: el -> ref = cast el,
-            attrs: {
-              className: 'new-todo',
-              placeholder: 'What needs doing?',
-              autofocus: true,
-              value: task,
-              oninput: e -> {
-                Model.from(context).updateField(ref.value);
-              },
-              onkeydown: e -> {
-                var ev:js.html.KeyboardEvent = cast e;
-                if (ev.key == 'Enter') {
-                  ref.value = '';
-                  Model.from(context).add();
-                }
+            className: 'new-todo',
+            placeholder: 'What needs doing?',
+            autofocus: true,
+            value: task,
+            oninput: e -> {
+              Model.from(context).updateField(ref.value);
+            },
+            onkeydown: e -> {
+              var ev:js.html.KeyboardEvent = cast e;
+              if (ev.key == 'Enter') {
+                ref.value = '';
+                Model.from(context).add();
               }
             }
           })
-        ]))
-      ]
-    });
+        )
+      )
+    );
   }
 }
 
@@ -253,40 +237,29 @@ class ViewEntries extends Component {
       var allCompleted = model.entries.filter(e -> !e.completed).length == 0;
 
       Html.section({
-        attrs: {
           className: 'main',
           style: if (model.entries.length == 0) 'visibility: hidden' else null
         },
-        children: [
-          Html.input({
-            attrs: {
-              className: 'toggle-all',
-              id: 'toggle-all',
-              type: Checkbox,
-              name: 'toggle-all',
-              checked: allCompleted,
-              onclick: _ -> model.checkAll(!allCompleted)
-            }
-          }),
-          Html.label({
-            attrs: {
-              htmlFor: 'toggle-all'
-            },
-            children: [ Html.text('Mark all as complete') ]
-          }),
-          Html.ul({
-            attrs: {
-              className: 'todo-list'
-            },
-            children: [ for (entry in model.getVisibleEntries()) 
-              // Note the second argument here -- this is the component's
-              // key, which ensures we maintain the correct order for our
-              // components.
-              ViewEntry.node({ entry: entry }, entry.id)
-            ]
-          })
-        ]
-      });
+        Html.input({
+          className: 'toggle-all',
+          id: 'toggle-all',
+          type: Checkbox,
+          name: 'toggle-all',
+          checked: allCompleted,
+          onclick: _ -> model.checkAll(!allCompleted)
+        }),
+        Html.label({ htmlFor: 'toggle-all' },
+          Html.text('Mark all as complete') 
+        ),
+        Html.ul({ className: 'todo-list' },
+          ...[ for (entry in model.getVisibleEntries()) 
+            // Note the second argument here -- this is the component's
+            // key, which ensures we maintain the correct order for our
+            // components.
+            ViewEntry.node({ entry: entry }, entry.id)
+          ]
+        )
+      );
     });
   }
 }
@@ -308,60 +281,43 @@ class ViewEntry extends Component {
 
   public function render():VNode {
     return Html.li({
-      key: entry.id,
-      attrs: {
+        key: entry.id,
         className: [
           if (entry.completed) 'completed' else null,
           if (entry.editing) 'editing' else null
         ].filter(c -> c != null).join(' ')
       },
-      children: [
-        Html.div({
-          attrs: {
-            className: 'view'
-          },
-          children: [
-            Html.input({
-              attrs: {
-                className: 'toggle',
-                type: Checkbox,
-                checked: entry.completed,
-                onclick: _ -> model.check(entry.id, !entry.completed)
-              }
-            }),
-            Html.label({
-              attrs: {
-                ondblclick: _ -> model.editingEntry(entry.id, true)
-              },
-              children: [ Html.text(entry.description) ]
-            }),
-            Html.button({
-              attrs: {
-                className: 'destroy',
-                onclick: _ ->  model.deleteEntry(entry.id)
-              }
-            })
-          ]
-        }),
+      Html.div({ className: 'view' },
         Html.input({
-          ref: e -> ref = cast e,
-          attrs: {
-            className: 'edit',
-            value: entry.description,
-            name: 'title',
-            id: 'todo-${entry.id}',
-            oninput: _ -> model.updateEntry(entry.id, ref.value),
-            onblur: _ -> model.editingEntry(entry.id, false),
-            onkeydown: e -> {
-              var ev:js.html.KeyboardEvent = cast e;
-              if (ev.key == 'Enter') {
-                model.editingEntry(entry.id, false);
-              }
-            }
-          }
+          className: 'toggle',
+          type: Checkbox,
+          checked: entry.completed,
+          onclick: _ -> model.check(entry.id, !entry.completed)
+        }),
+        Html.label({
+          ondblclick: _ -> model.editingEntry(entry.id, true)
+        }, Html.text(entry.description)),
+        Html.button({
+          className: 'destroy',
+          onclick: _ ->  model.deleteEntry(entry.id)
         })
-      ]
-    });
+      ),
+      Html.input({
+        ref: e -> ref = cast e,
+        className: 'edit',
+        value: entry.description,
+        name: 'title',
+        id: 'todo-${entry.id}',
+        oninput: _ -> model.updateEntry(entry.id, ref.value),
+        onblur: _ -> model.editingEntry(entry.id, false),
+        onkeydown: e -> {
+          var ev:js.html.KeyboardEvent = cast e;
+          if (ev.key == 'Enter') {
+            model.editingEntry(entry.id, false);
+          }
+        }
+      })
+    );
   }
 }
 
@@ -370,45 +326,33 @@ class ViewControls extends Component {
     return Model.use(model -> {
       var entriesCompleted = model.entries.filter(e -> e.completed).length;
       var entriesLeft = model.entries.length - entriesCompleted;
-      return Html.footer({
-        attrs: {
+      return Html.footer(
+        {
           className: 'footer',
           style: if (model.entries.length == 0) 'display: none' else null
         },
-        children: [
-          Html.span({
-            attrs: { className: 'todo-count' },
-            children: [
-              Html.strong({
-                children: [ 
-                  Html.text(switch entriesLeft {
-                    case 1: '${entriesLeft} item left';
-                    default: '${entriesLeft} items left';
-                  })
-                ]
-              })
-            ]
-          }),
-          Html.ul({
-            attrs: {
-              className: 'filters'
-            },
-            children: [
-              visibilityControl('#/', All, model.visibility, model),
-              visibilityControl('#/active', Active, model.visibility, model),
-              visibilityControl('#/completed', Completed, model.visibility, model)
-            ]
-          }),
-          Html.button({
-            attrs: {
-              className: 'clear-completed',
-              style: if (entriesCompleted == 0) 'visibility: hidden' else null,
-              onclick: _ -> model.deleteCompleted()
-            },
-            children: [ Html.text('Clear completed (${entriesCompleted})') ]
-          })
-        ]
-      });
+        Html.span({ className: 'todo-count' },
+          Html.strong({},
+            Html.text(switch entriesLeft {
+              case 1: '${entriesLeft} item left';
+              default: '${entriesLeft} items left';
+            })
+          )
+        ),
+        Html.ul({ className: 'filters' },
+          visibilityControl('#/', All, model.visibility, model),
+          visibilityControl('#/active', Active, model.visibility, model),
+          visibilityControl('#/completed', Completed, model.visibility, model)
+        ),
+        Html.button(
+          {
+            className: 'clear-completed',
+            style: if (entriesCompleted == 0) 'visibility: hidden' else null,
+            onclick: _ -> model.deleteCompleted()
+          },
+          Html.text('Clear completed (${entriesCompleted})') 
+        )
+      );
     });
   }
 
@@ -418,19 +362,17 @@ class ViewControls extends Component {
     actualVisibility:Visibility,
     model:Model
   ) {
-    return Html.li({
-      attrs: {
+    return Html.li(
+      {
         onclick: _ -> model.changeVisibility(visibility)
       },
-      children: [
-        Html.a({
-          attrs: {
-            href: url,
-            className: if (visibility == actualVisibility) 'selected' else null
-          },
-          children: [ Html.text(visibility) ]
-        })
-      ]
-    });
+      Html.a(
+        {
+          href: url,
+          className: if (visibility == actualVisibility) 'selected' else null
+        },
+        Html.text(visibility)
+      )
+    );
   }
 }

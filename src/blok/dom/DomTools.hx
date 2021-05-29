@@ -8,13 +8,12 @@ class DomTools {
   public static function setChildren(
     previousCount:Int,
     cursor:Cursor,
-    children:Array<Component>,
+    nodes:Array<Node>,
     parent:Component
   ) {
     try {
       var insertedCount = 0;
       var currentCount = 0;
-      var nodes = getNodesFromComponents(children);
 
       for (node in nodes) {
         currentCount++;

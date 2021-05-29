@@ -1,12 +1,10 @@
 package blok;
 
 import js.html.Node;
-import blok.tools.ObjectTools;
 
 using blok.dom.DomTools;
 using blok.dom.Cursor;
 
-@:allow(blok.NodeType)
 @component(dontGenerateType)
 class NativeComponent<Attrs:{}> extends Component {
   @prop public var attributes:Attrs = null;
@@ -39,6 +37,14 @@ class NativeComponent<Attrs:{}> extends Component {
   }
 
   public function render():VNode {
-    return if (children != null && children.length > 0) new VFragment(children) else new VNodeNone();
+    return if (children != null && children.length > 0) 
+      new VFragment(children) 
+    else
+      new VFragment([]);
+  }
+
+  override function __ensureVNode(vn:Null<VNode>):VNode {
+    // No placeholders needed for NativeComponents.
+    return if (vn == null) new VFragment([]) else vn;
   }
 }
