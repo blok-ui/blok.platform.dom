@@ -40,11 +40,11 @@ class NativeComponent<Attrs:{}> extends Component {
     return if (children != null && children.length > 0) 
       new VFragment(children) 
     else
-      new VFragment([]);
+      VFragment.empty();
   }
 
   override function __ensureVNode(vn:Null<VNode>):VNode {
     // No placeholders needed for NativeComponents.
-    return if (vn == null) new VFragment([]) else vn;
+    return if (vn == null) VFragment.empty() else vn;
   }
 }

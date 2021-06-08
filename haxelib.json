@@ -8,9 +8,9 @@
     "blok.platform"
   ],
   "releasenote": "Pre-release",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "dependencies": {
-    "blok.core": "0.0.4",
-    "blok.core.html": "0.0.4"
+    "blok.core": "0.1.0",
+    "blok.core.html": "0.1.1"
   }
 }
