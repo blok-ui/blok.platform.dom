@@ -49,7 +49,7 @@ class VNative<Attrs:{}> implements VNode {
     this.key = props.key;
   }
 
-  public function createComponent():Component {
+  public function createComponent(?parent:Component):Component {
     var node = isSvg 
       ? Browser.document.createElementNS(SVG_NS, tag)
       : Browser.document.createElement(tag);
@@ -63,6 +63,8 @@ class VNative<Attrs:{}> implements VNode {
       props.attrs,
       DomTools.updateNodeAttribute.bind(native.node)
     );
+    native.initializeComponent(parent, key);
+    native.renderComponent();
     return native;
   }
 
@@ -77,6 +79,9 @@ class VNative<Attrs:{}> implements VNode {
       attributes: props.attrs,
       children: props.children
     });
+    if (native.shouldComponentRender()) {
+      native.renderComponent();
+    }
     return native;
   }
 }

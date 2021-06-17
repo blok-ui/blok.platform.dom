@@ -28,7 +28,7 @@ class NativeComponent<Attrs:{}> extends Component {
     if (ref != null) ref(node);
   }
 
-  override function shouldComponentUpdate():Bool {
+  override function shouldComponentRender():Bool {
     return shouldUpdate;
   }
 
@@ -36,15 +36,15 @@ class NativeComponent<Attrs:{}> extends Component {
     return type;
   }
 
-  public function render():VNode {
+  public function render() {
     return if (children != null && children.length > 0) 
       new VFragment(children) 
     else
       VFragment.empty();
   }
 
-  override function __ensureVNode(vn:Null<VNode>):VNode {
+  override function __ensureVNode(vn):VNodeResult {
     // No placeholders needed for NativeComponents.
-    return if (vn == null) VFragment.empty() else vn;
+    return if (vn == null) [] else vn;
   }
 }

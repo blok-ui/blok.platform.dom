@@ -177,7 +177,7 @@ class Model implements State {
 class Root extends Component {
   @prop var model:Model;
 
-  public function render():VNode {
+  public function render() {
     return Html.div({ className: 'todomvc-wrapper' },
       Html.section({ className: 'todoapp' },
         Provider.provide(model, context -> Html.fragment(
@@ -197,7 +197,7 @@ class ViewInput extends Component {
   @prop var task:String;
   var ref:js.html.InputElement;
 
-  public function render():VNode {
+  public function render() {
     return Html.header({ className: 'header' },
         Context.use(context -> Html.fragment(
           Html.h1({}, Html.text('todos')),
@@ -225,7 +225,7 @@ class ViewInput extends Component {
 }
 
 class ViewEntries extends Component {
-  public function render():VNode {
+  public function render() {
     return Model.use(model -> {
       var allCompleted = model.entries.filter(e -> !e.completed).length == 0;
 
@@ -272,7 +272,7 @@ class ViewEntry extends Component {
     if (entry.editing) ref.focus();
   }
 
-  public function render():VNode {
+  public function render() {
     return Html.li({
         key: entry.id,
         className: [
@@ -315,7 +315,7 @@ class ViewEntry extends Component {
 }
 
 class ViewControls extends Component {
-  public function render():VNode {
+  public function render() {
     return Model.use(model -> {
       var entriesCompleted = model.entries.filter(e -> e.completed).length;
       var entriesLeft = model.entries.length - entriesCompleted;
