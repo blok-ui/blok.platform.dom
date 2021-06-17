@@ -83,15 +83,8 @@ class Model implements State {
   @prop var field:String = '';
   @prop var uid:Int;
   @prop var visibility:Visibility;
-  // @computed var visibleEntries:ReadOnlyArray<Entry> = {
-  //   var out = entries.filter(entry -> switch visibility {
-  //     case Completed: entry.completed;
-  //     case Active: !entry.completed;
-  //     case All: true;
-  //   });
-  //   out.reverse();
-  //   out;
-  // }
+  
+  @memo
   public function getVisibleEntries() {
     var out = entries.filter(entry -> switch visibility {
       case Completed: entry.completed;

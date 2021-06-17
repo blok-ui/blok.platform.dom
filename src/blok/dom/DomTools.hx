@@ -48,6 +48,8 @@ class DomTools {
     var el:Element = cast node;
     var isSvg = el.namespaceURI == VNative.SVG_NS;
     switch name {
+      case 'ref' | 'key': 
+        // noop
       case 'className':
         updateNodeAttribute(node, 'class', oldValue, newValue);
       case 'xmlns' if (isSvg): // skip
