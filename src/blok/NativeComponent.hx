@@ -37,10 +37,7 @@ class NativeComponent<Attrs:{}> extends Component {
   }
 
   public function render() {
-    return if (children != null && children.length > 0) 
-      new VFragment(children) 
-    else
-      VFragment.empty();
+    return if (children != null) children else [];
   }
 
   override function __ensureVNode(vn):VNodeResult {

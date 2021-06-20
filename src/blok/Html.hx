@@ -9,7 +9,7 @@ import blok.Key;
 ))
 class Html {
   public static inline function fragment(...children:VNode):VNode {
-    return new VFragment(children.toArray());
+    return Fragment.node({ children: children.toArray() });
   }
 
   public static inline function text(content:String, ?key:Key):VNode {
