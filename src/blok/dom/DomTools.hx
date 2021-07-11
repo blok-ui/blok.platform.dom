@@ -1,10 +1,40 @@
 package blok.dom;
 
 import js.html.Node;
-import js.html.Element;
 import blok.exception.*;
 
 class DomTools {
+  public static function getNodesFromComponents(children:Array<Component>) {
+    var nodes:Array<Node> = [];
+    for (child in children) switch Std.downcast(child, NativeComponent) {
+      case null: 
+        nodes = nodes.concat(getNodesFromComponents(child.__children));
+      case native:
+        nodes.push(native.node);
+    }
+    return nodes;
+  }
+
+  // public static function findNodeClosestToComponent(component:Component) {
+  //   if (component.__parent == null) return null;
+
+  //   var parent = component.__parent;
+  //   var pos = parent.getChildPosition(component);
+  //   var before = parent.getChildren().slice(0, pos);
+    
+  //   if (before.length == 0) {
+  //     return findNodeClosestToComponent(parent);
+  //   }
+
+  //   var nodes = getNodesFromComponents(before);
+    
+  //   if (nodes.length == 0) {
+  //     return findNodeClosestToComponent(before[before.length - 1]);
+  //   }
+
+  //   return nodes[nodes.length - 1];
+  // }
+
   public static function setChildren(
     previousCount:Int,
     cursor:Cursor,
@@ -30,51 +60,6 @@ class DomTools {
       throw e;
     } catch (e) {
       throw new WrappedException(e, parent);
-    }
-  }
-
-  public static function getNodesFromComponents(children:Array<Component>) {
-    var nodes:Array<Node> = [];
-    for (child in children) switch Std.downcast(child, NativeComponent) {
-      case null: 
-        nodes = nodes.concat(getNodesFromComponents(child.__children));
-      case native:
-        nodes.push(native.node);
-    }
-    return nodes;
-  }
-
-  public static function updateNodeAttribute(node:Node, name:String, oldValue:Dynamic, newValue:Dynamic):Void {
-    var el:Element = cast node;
-    var isSvg = el.namespaceURI == VNative.SVG_NS;
-    switch name {
-      case 'ref' | 'key': 
-        // noop
-      case 'className':
-        updateNodeAttribute(node, 'class', oldValue, newValue);
-      case 'xmlns' if (isSvg): // skip
-      case 'value' | 'selected' | 'checked' if (!isSvg):
-        js.Syntax.code('{0}[{1}] = {2}', el, name, newValue);
-      case _ if (!isSvg && js.Syntax.code('{0} in {1}', name, el)):
-        js.Syntax.code('{0}[{1}] = {2}', el, name, newValue);
-      default:
-        if (name.charAt(0) == 'o' && name.charAt(1) == 'n') {
-          var name = name.toLowerCase();
-          if (newValue == null) {
-            Reflect.setField(el, name, null);
-          } else {
-            Reflect.setField(el, name, newValue);
-          }
-          // var ev = key.substr(2).toLowerCase();
-          // el.removeEventListener(ev, oldValue);
-          // if (newValue != null) el.addEventListener(ev, newValue);
-        } else if (newValue == null || (Std.is(newValue, Bool) && newValue == false)) {
-          el.removeAttribute(name);
-        } else if (Std.is(newValue, Bool) && newValue == true) {
-          el.setAttribute(name, name);
-        } else {
-          el.setAttribute(name, newValue);
-        }
     }
   }
 }

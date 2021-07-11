@@ -9,5 +9,7 @@
 -dce full
 -D analyzer-optimize
 -D js-es=6
+-D debug
+-D js-source-map
 
 -js dist/todomvc/app.js

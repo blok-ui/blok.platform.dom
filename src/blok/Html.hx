@@ -12,6 +12,10 @@ class Html {
     return Fragment.node({ children: children.toArray() });
   }
 
+  public static inline function placeholder() {
+    return text('');
+  }
+
   public static inline function text(content:String, ?key:Key):VNode {
     return new VText({ content: content }, key);
   }
