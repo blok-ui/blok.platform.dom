@@ -31,7 +31,7 @@ class DomPlugin implements Plugin {
   public function wasRendered(component:Component) {
     switch Std.downcast(component, NativeComponent) {
       case null:
-        if (component.__isFirstRender) return;
+        if (component.componentIsRenderingForTheFirstTime()) return;
     
         var previousCount = 0;
         var previous = component.getPreviousChildren().getNodesFromComponents();
@@ -41,7 +41,7 @@ class DomPlugin implements Plugin {
           if (first == null) first = node;
           previousCount++;
         }
-    
+
         if (first == null) {
           // todo: throw something
           trace(Type.getClassName(Type.getClass(component)));
@@ -56,7 +56,7 @@ class DomPlugin implements Plugin {
       case native:
         if (native.node is Text) return;
 
-        if (native.__isFirstRender) {
+        if (native.componentIsRenderingForTheFirstTime()) {
           DomTools.setChildren(
             0,
             native.node.traverseChildren(),

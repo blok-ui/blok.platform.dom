@@ -1,4 +1,4 @@
--cp src
+-cp refactor
 -cp examples
 
 -lib blok.core
@@ -10,6 +10,6 @@
 -D analyzer-optimize
 -D js-es=6
 -D debug
--D js-source-map
+# -D js-source-map
 
 -js dist/todomvc/app.js
