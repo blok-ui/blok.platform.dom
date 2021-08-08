@@ -71,16 +71,39 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
     super.dispose();
   }
 
-  public function addConcreteChild(child:Widget) {
-    ConcreteTools.appendConcreteChild(this, el, child);
+  public function addConcreteChild(childWidget:Widget) {
+    var children:Array<Node> = cast childWidget.getConcreteManager().toConcrete();
+    el.append(...children);
   }
 
-  public function insertConcreteChildAt(pos:Int, widget:Widget) {
-    ConcreteTools.insertConcreteChildAt(this, el, pos, widget);
+  public function insertConcreteChildAt(pos:Int, childWidget:Widget) {
+    var children:Array<Node> = cast childWidget.getConcreteManager().toConcrete();
+    
+    if (pos == 0) {
+      el.prepend(...children);
+      return;
+    }
+
+    var previousWidget = getChildAt(pos - 1);
+
+    if (previousWidget == null) {
+      el.append(...children);
+      return;
+    }
+
+    var previousElement:Element = previousWidget
+      .getConcreteManager()
+      .getLastConcreteChild();
+      
+    if (previousElement == null) {
+      throw 'We may need to rethink this';
+    }
+
+    previousElement.after(...children);
   }
 
   public function moveConcreteChildTo(pos:Int, widget:Widget) {
-    ConcreteTools.insertConcreteChildAt(this, el, pos, widget);
+    insertConcreteChildAt(pos, widget);
   }
 
   public function removeConcreteChild(widget:Widget) {
