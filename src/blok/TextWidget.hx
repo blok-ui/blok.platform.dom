@@ -8,14 +8,14 @@ class TextWidget extends ConcreteWidget {
   public static final type:WidgetType = getUniqueTypeId();
 
   final node:Text;
+
+  public function new(content:String) {
+    this.node = Browser.document.createTextNode(content);
+  }
   
   override function dispose() {
     node.remove();
     super.dispose();
-  }
-
-  public function new(content:String) {
-    this.node = Browser.document.createTextNode(content);
   }
 
   public function setText(content:String) {
@@ -25,10 +25,6 @@ class TextWidget extends ConcreteWidget {
   
   public function getWidgetType() {
     return type;
-  }
-
-  public function getLength() {
-    return 1;
   }
 
   public function toConcrete() {

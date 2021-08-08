@@ -66,7 +66,7 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
   }
 
   override function dispose() {
-    for (child in getChildren()) removeConcreteChild(child);
+    el.remove();
     super.dispose();
   }
 
@@ -76,7 +76,9 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
   }
 
   public function insertConcreteChildAt(pos:Int, childWidget:Widget) {
-    var children:Array<Node> = cast childWidget.getConcreteManager().toConcrete();
+    var children:Array<Node> = cast childWidget
+      .getConcreteManager()
+      .toConcrete();
     
     if (pos == 0) {
       el.prepend(...children);
@@ -93,10 +95,6 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
     var previousElement:Element = previousWidget
       .getConcreteManager()
       .getLastConcreteChild();
-      
-    if (previousElement == null) {
-      throw 'We may need to rethink this';
-    }
 
     previousElement.after(...children);
   }

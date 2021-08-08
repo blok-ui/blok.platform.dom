@@ -5,11 +5,15 @@ import js.html.Text;
 import js.html.Node;
 import js.html.Element;
 
-// @Todo: Remove the marker if we have actual elements in the tree.
-//        Right now we kind of sort of do it.
+using Lambda;
+
+// @Todo: Remove the marker if we have actual elements in the tree?
 //
-//        Note that this will work better if we just pass a 
+//        Note that this will work better if we can just pass a 
 //        PlaceholderWidget from the parent Component :P.
+//
+//        This implementation may be fine as-is, honestly, but it's
+//        worth looking into.
 class ComponentManager implements ConcreteManager {
   #if !debug
     final marker:Text = Browser.document.createTextNode('');
@@ -21,22 +25,15 @@ class ComponentManager implements ConcreteManager {
   public function new(component) {
     this.component = component;
     #if debug marker = Browser.document.createComment(
-      'blok-placeholder:' + Type.getClassName(Type.getClass(component))
+      'blok-marker:' + Type.getClassName(Type.getClass(component))
     ); #end
   }
 
   public function toConcrete() {
     var concrete = component.getConcreteChildren();
-    var els:Array<Element> = [];
-    
-    for (child in concrete) {
-      els = els.concat(cast child.toConcrete());
-    }
-
-    if (els.length == 0) {
-      els.push(cast marker);
-    }
-    
+    var els:Array<Element> = [ cast marker ].concat(
+      concrete.map(c -> c.toConcrete()).flatten()
+    );
     return els;
   }
 
@@ -53,24 +50,21 @@ class ComponentManager implements ConcreteManager {
   }
   
   public function addConcreteChild(childWidget:Widget) {
-    var first = getFirstConcreteChild();
-    var parentNode = first.parentNode;
-    if (parentNode == null) {
+    if (marker.parentNode == null) {
       // Will be handled by the next ConcreteWidget in the tree.
       return;
     }
     
     var last:Element = getLastConcreteChild();
-    var children:Array<Node> = cast childWidget.getConcreteManager().toConcrete();
+    var children:Array<Node> = cast childWidget
+      .getConcreteManager()
+      .toConcrete();
+    
     last.after(...children);
-
-    if (marker.parentNode != null) marker.remove();
   }
 
   public function insertConcreteChildAt(pos:Int, childWidget:Widget) {
-    var first = getFirstConcreteChild();
-    var parentNode = first.parentNode;
-    if (parentNode == null) {
+    if (marker.parentNode == null) {
       // Will be handled by the next ConcreteWidget in the tree.
       return;
     }
@@ -78,7 +72,7 @@ class ComponentManager implements ConcreteManager {
     var children:Array<Node> = cast childWidget.getConcreteManager().toConcrete();
     
     if (pos == 0) {
-      first.after(...children);
+      marker.after(...children);
       return;
     }
 
@@ -92,14 +86,8 @@ class ComponentManager implements ConcreteManager {
     var previousElement:Element = previousWidget
       .getConcreteManager()
       .getLastConcreteChild();
-      
-    if (previousElement == null) {
-      throw 'We may need to rethink this';
-    }
 
     previousElement.after(...children);
-    
-    if (marker.parentNode != null) marker.remove();
   }
 
   public function moveConcreteChildTo(pos:Int, widget:Widget):Void {
@@ -108,10 +96,6 @@ class ComponentManager implements ConcreteManager {
 
   public function removeConcreteChild(widget:Widget):Void {
     var els:Array<Element> = cast widget.getConcreteManager().toConcrete();
-    if (marker.parentNode == null) {
-      // Ensure the marker is mounted if needed
-      if (toConcrete().length <= 1) getFirstConcreteChild().before(marker);
-    }
     for (child in els) child.remove();
   }
 
