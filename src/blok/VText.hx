@@ -1,30 +1,27 @@
 package blok;
 
-import js.html.Text;
-import blok.VNodeType.getUniqueTypeId;
-
-private final textType = getUniqueTypeId(); 
-
 class VText implements VNode {
-  public final type = textType;
+  public final type:WidgetType = TextWidget.type;
   public final key:Null<Key>;
-  public final props:{ content:String };
+  public final props:Dynamic;
   public final children:Null<Array<VNode>> = null;
 
-  public function new(props:{ content:String }, ?key) {
-    this.props = props;
+  public function new(text:String, ?key) {
     this.key = key;
+    this.props = text;
   }
 
-  public function createComponent(engine:Engine, ?parent:Component):Component {
-    var native = new NativeComponent(type, new Text(props.content), {}, null, false);
-    native.initializeComponent(parent, engine, key);
-    return native;
+  public function createWidget(?parent:Widget, platform:Platform, registerEffect:(effect:()->Void)->Void):Widget {
+    var widget = new TextWidget(props);
+    widget.initializeWidget(parent, platform, key);
+    widget.performUpdate(registerEffect);
+    return widget;
   }
 
-  public function updateComponent(engine:Engine, component:Component) {
-    var native:NativeComponent<{}> = cast component;
-    if (props.content != native.node.textContent) native.node.textContent = props.content;
-    return native;
+  public function updateWidget(widget:Widget, registerEffect:(effect:()->Void)->Void):Widget {
+    var text:TextWidget = cast widget;
+    text.setText(props);
+    text.performUpdate(registerEffect);
+    return widget;
   }
 }

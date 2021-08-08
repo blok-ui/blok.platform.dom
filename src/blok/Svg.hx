@@ -2,7 +2,7 @@ package blok;
 
 @:build(blok.core.html.HtmlBuilder.build(
   'blok.core.html.SvgTags',
-  'blok.VNative',
+  'blok.VElement',
   (_:js.html.Node),
   'svg'
 ))

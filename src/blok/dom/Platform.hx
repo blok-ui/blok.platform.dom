@@ -1,20 +1,25 @@
 package blok.dom;
 
 import js.html.Element;
-import blok.VNode;
 
-class Platform {
-  public static function mount(el:Element, child:VNode) {
-    var engine = new Engine([ new DomPlugin() ]);
-    var root = new NativeComponent(
-      VNative.getTypeForNode(el), 
-      cast el, 
-      { children: [ child ] }
+class Platform extends blok.Platform {
+  public static function mount(
+    el:Element,
+    root:VNode,
+    ?initialEffect
+  ) {
+    var platform = new Platform(new DefaultScheduler());
+    var root = new ElementWidget(
+      el, 
+      VElement.getTypeForNode(el),
+      {},
+      [ root ]
     );
-    
-    root.initializeRootComponent(engine);
-    root.renderRootComponent();
-
+    platform.mountRootWidget(root, initialEffect);
     return root;
+  }
+
+  public function createManagerForComponent(component:Component):ConcreteManager {
+    return new ComponentManager(component);
   }
 }

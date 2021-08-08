@@ -1,2 +1,3 @@
--cp ../blok.core/refactor
--D blok.core=0.2.0
+# @install: lix --silent download "gh://github.com/blok-ui/blok.core#fc97efdee04e11e3a678234a310c5be09f02811e" into blok.core/0.3.0/github/fc97efdee04e11e3a678234a310c5be09f02811e
+-cp ${HAXE_LIBCACHE}/blok.core/0.3.0/github/fc97efdee04e11e3a678234a310c5be09f02811e/src
+-D blok.core=0.3.0

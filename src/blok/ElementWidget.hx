@@ -2,7 +2,6 @@ package blok;
 
 import js.html.Node;
 import js.html.Element;
-import blok.dom.ConcreteTools;
 import blok.tools.ObjectTools;
 
 class ElementWidget<Attrs:{}> extends ConcreteWidget {
