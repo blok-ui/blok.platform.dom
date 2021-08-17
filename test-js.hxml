@@ -1,6 +1,9 @@
 -cp src
 -cp test
 
+-lib medic
+# -lib hxnodejs
+# -lib nodom
 -lib blok.core
 -lib blok.core.html
 

@@ -8,15 +8,35 @@ class Platform extends blok.Platform {
     root:VNode,
     ?initialEffect
   ) {
-    var platform = new Platform(new DefaultScheduler());
-    var root = new ElementWidget(
+    var platform = createPlatform();
+    var root = createRoot(el, root);
+    platform.mountRootWidget(root, initialEffect);
+    return root;
+  }
+
+  public static function hydrate(
+    el:Element,
+    root:VNode,
+    ?initialEffect
+  ) {
+    var platform = createPlatform();
+    var effects = EffectManager.createEffectManager();
+    return Hydrator.hydrate(el, root, platform, effects.register);
+    if (initialEffect != null) effects.register(initialEffect);
+    effects.dispatch();
+  }
+
+  public inline static function createPlatform() {
+    return new Platform(new DefaultScheduler());
+  }
+
+  public inline static function createRoot(el:Element, root:VNode) {
+    return new ElementWidget(
       el, 
       VElement.getTypeForNode(el),
       {},
       [ root ]
     );
-    platform.mountRootWidget(root, initialEffect);
-    return root;
   }
 
   public function createManagerForComponent(component:Component):ConcreteManager {

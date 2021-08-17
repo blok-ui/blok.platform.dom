@@ -1,4 +1,7 @@
 /dist/todomvc/app.js
 /dist/todomvc/app.js.map
+/dist/hydrated/app.js
+/dist/hydrated/app.js.map
+/dist/index.html
 /dist/test.js
 /dump

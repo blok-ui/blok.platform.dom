@@ -4,12 +4,18 @@
 -lib blok.core
 -lib blok.core.html
 
--main todomvc.TodoMvc
-
 -dce full
 -D analyzer-optimize
 -D js-es=6
 -D debug
 # -D js-source-map
 
+--each
+
+-main todomvc.TodoMvc
 -js dist/todomvc/app.js
+
+--next
+
+-main hydrated.Example
+-js dist/hydrated/app.js

@@ -1,5 +1,7 @@
 package blok;
 
+import js.Browser;
+
 class VText implements VNode {
   public final type:WidgetType = TextWidget.type;
   public final key:Null<Key>;
@@ -12,7 +14,7 @@ class VText implements VNode {
   }
 
   public function createWidget(?parent:Widget, platform:Platform, registerEffect:(effect:()->Void)->Void):Widget {
-    var widget = new TextWidget(props);
+    var widget = new TextWidget(Browser.document.createTextNode(props));
     widget.initializeWidget(parent, platform, key);
     widget.performUpdate(registerEffect);
     return widget;

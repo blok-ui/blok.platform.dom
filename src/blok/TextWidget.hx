@@ -1,6 +1,5 @@
 package blok;
 
-import js.Browser;
 import js.html.Text;
 import blok.WidgetType.getUniqueTypeId;
 
@@ -9,8 +8,8 @@ class TextWidget extends ConcreteWidget {
 
   final node:Text;
 
-  public function new(content:String) {
-    this.node = Browser.document.createTextNode(content);
+  public function new(node) {
+    this.node = node;
   }
   
   override function dispose() {

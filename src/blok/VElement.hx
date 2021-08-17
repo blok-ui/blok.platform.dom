@@ -36,9 +36,9 @@ class VElement<Attrs:{}> implements VNode {
   public final type:WidgetType;
   public final props:Dynamic;
   public final children:Null<Array<VNode>>;
-  final ref:Null<(node:Node)->Void>;
-  final isSvg:Bool;
-  final tag:String;
+  public final ref:Null<(node:Node)->Void>;
+  public final tag:String;
+  public final isSvg:Bool;
 
   public function new(type, tag, props:HtmlChildrenProps<Attrs, Node>, isSvg) {
     this.type = type;

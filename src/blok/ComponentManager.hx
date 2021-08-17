@@ -16,9 +16,9 @@ using Lambda;
 //        worth looking into.
 class ComponentManager implements ConcreteManager {
   #if !debug
-    final marker:Text = Browser.document.createTextNode('');
+    public final marker:Text = Browser.document.createTextNode('');
   #else
-    final marker:js.html.Comment;
+    public final marker:js.html.Comment;
   #end
   final component:Component;
 
