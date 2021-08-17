@@ -17,7 +17,6 @@ class Simple extends Component {
 
   @update
   function changeMessage() {
-    trace('clicked');
     return UpdateState({
       message: 'Changed ${times++}.'
     });

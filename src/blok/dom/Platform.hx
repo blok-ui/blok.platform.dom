@@ -21,9 +21,10 @@ class Platform extends blok.Platform {
   ) {
     var platform = createPlatform();
     var effects = EffectManager.createEffectManager();
-    return Hydrator.hydrate(el, root, platform, effects.register);
+    var root = Hydrator.hydrate(el, root, platform, effects.register);
     if (initialEffect != null) effects.register(initialEffect);
     effects.dispatch();
+    return root;
   }
 
   public inline static function createPlatform() {
