@@ -28,7 +28,7 @@ class Platform extends blok.Platform {
   }
 
   public inline static function createPlatform() {
-    return new Platform(new DefaultScheduler());
+    return new Platform(DefaultScheduler.getInstance());
   }
 
   public inline static function createRoot(el:Element, root:VNode) {

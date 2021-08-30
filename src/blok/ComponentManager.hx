@@ -1,22 +1,14 @@
 package blok;
 
 import js.Browser;
-import js.html.Text;
 import js.html.Node;
 import js.html.Element;
 
 using Lambda;
 
-// @Todo: Remove the marker if we have actual elements in the tree?
-//
-//        Note that this will work better if we can just pass a 
-//        PlaceholderWidget from the parent Component :P.
-//
-//        This implementation may be fine as-is, honestly, but it's
-//        worth looking into.
 class ComponentManager implements ConcreteManager {
   #if !debug
-    public final marker:Text = Browser.document.createTextNode('');
+    public final marker:js.html.Text = Browser.document.createTextNode('');
   #else
     public final marker:js.html.Comment;
   #end
@@ -24,9 +16,11 @@ class ComponentManager implements ConcreteManager {
 
   public function new(component) {
     this.component = component;
-    #if debug marker = Browser.document.createComment(
-      'blok-marker:' + Type.getClassName(Type.getClass(component))
-    ); #end
+    #if debug 
+      marker = Browser.document.createComment(
+        'blok-marker:' + Type.getClassName(Type.getClass(component))
+      ); 
+    #end
   }
 
   public function toConcrete() {
@@ -51,7 +45,7 @@ class ComponentManager implements ConcreteManager {
   
   public function addConcreteChild(childWidget:Widget) {
     if (marker.parentNode == null) {
-      // Will be handled by the next ConcreteWidget in the tree.
+      // Will be handled by a parent ConcreteWidget.
       return;
     }
     
@@ -65,7 +59,7 @@ class ComponentManager implements ConcreteManager {
 
   public function insertConcreteChildAt(pos:Int, childWidget:Widget) {
     if (marker.parentNode == null) {
-      // Will be handled by the next ConcreteWidget in the tree.
+      // Will be handled by a parent ConcreteWidget.
       return;
     }
 

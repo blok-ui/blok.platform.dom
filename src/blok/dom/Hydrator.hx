@@ -7,7 +7,7 @@ import js.html.Element;
 // @todo: This is probably rather fragile, as we're basically handling
 //        widget lifecycles manually. Ideally we'd just be able to
 //        use `widget.performUpdate(...)`, but right now that'll create
-//        elements, which is not what we want whne Hydrating. 
+//        elements, which is not what we want when hydrating. 
 
 function hydrate(
   el:Element,
@@ -71,12 +71,13 @@ private function createComponent<Props:{}>(
   platform:Platform,
   registerEffect:(effect:()->Void)->Void
 ) {
+  if (vnode == null) return null;
   var comp = vnode.factory(vnode.props);
   comp.initializeWidget(parent, platform, vnode.key);
   var manager:ComponentManager = cast comp.getConcreteManager();
   // Todo: not 100% sure if we need to insert the marker?
   firstNode.parentNode.insertBefore(manager.marker, firstNode);
-  createChildren(comp, comp.render().toArray(), platform, firstNode, registerEffect);
+  createChildren(comp, comp.__performRender().toArray(), platform, firstNode, registerEffect);
   registerEffect(comp.runComponentEffects);
   comp.__status = WidgetValid;
   return comp;
@@ -93,8 +94,10 @@ private function createChildren(
     case null: switch Std.downcast(child, VText) {
       case null:
         var comp = createComponent(real, cast child, parent, platform, registerEffect);
-        parent.__children.add(comp);
-        real = comp.getConcreteManager().getLastConcreteChild();
+        if (comp != null) { 
+          parent.__children.add(comp);
+          real = comp.getConcreteManager().getLastConcreteChild();
+        }
       case text:
         parent.__children.add(createTextWidget(cast real, text, parent, platform, registerEffect));
         real = real.nextSibling;
