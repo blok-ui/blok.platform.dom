@@ -96,7 +96,7 @@ private function createChildren(
         var comp = createComponent(real, cast child, parent, platform, registerEffect);
         if (comp != null) { 
           parent.__children.add(comp);
-          real = comp.getConcreteManager().getLastConcreteChild();
+          real = comp.getConcreteManager().getLastConcreteChild().nextSibling;
         }
       case text:
         parent.__children.add(createTextWidget(cast real, text, parent, platform, registerEffect));
