@@ -3,6 +3,7 @@ package blok.dom;
 import js.html.Text;
 import js.html.Node;
 import js.html.Element;
+import blok.core.html.Hydratable;
 
 // @todo: This is probably rather fragile, as we're basically handling
 //        widget lifecycles manually. Ideally we'd just be able to
@@ -22,7 +23,7 @@ function hydrate(
   return root;
 }
 
-private function createElementWidget<Attrs:{}>(
+function createElementWidget<Attrs:{}>(
   el:Element, 
   vnode:VElement<Attrs>,
   parent:Widget,
@@ -30,7 +31,6 @@ private function createElementWidget<Attrs:{}>(
   registerEffect:(effect:()->Void)->Void
 ):ElementWidget<Attrs> {
   #if debug assertIsElement(el, vnode.tag); #end
-
   var widget = new ElementWidget(
     el, 
     VElement.getTypeForNode(el),
@@ -41,15 +41,13 @@ private function createElementWidget<Attrs:{}>(
   widget.initializeWidget(parent, platform, vnode.key);
   widget.__status = WidgetValid;
   if (vnode.ref != null) registerEffect(() -> vnode.ref(el));
-
   if (vnode.children.length > 0) {
     createChildren(widget, vnode.children, platform, el.firstChild, registerEffect);
   }
-
   return widget;
 }
 
-private function createTextWidget(
+function createTextWidget(
   text:Text,
   vnode:VText,
   parent:Widget,
@@ -64,7 +62,7 @@ private function createTextWidget(
 }
 
 @:access(blok.Component)
-private function createComponent<Props:{}>(
+function createComponent<Props:{}>(
   firstNode:Node,
   vnode:VComponent<Props>,
   parent:Widget,
@@ -75,15 +73,19 @@ private function createComponent<Props:{}>(
   var comp = vnode.factory(vnode.props);
   comp.initializeWidget(parent, platform, vnode.key);
   var manager:ComponentManager = cast comp.getConcreteManager();
-  // Todo: not 100% sure if we need to insert the marker?
   firstNode.parentNode.insertBefore(manager.marker, firstNode);
-  createChildren(comp, comp.__performRender().toArray(), platform, firstNode, registerEffect);
+  if (comp is Hydratable) {
+    var hydratable:Hydratable = cast comp;
+    hydratable.hydrate(firstNode, registerEffect);
+  } else {
+    createChildren(comp, comp.__performRender().toArray(), platform, firstNode, registerEffect);
+  }
   registerEffect(comp.runComponentEffects);
   comp.__status = WidgetValid;
   return comp;
 }
 
-private function createChildren(
+function createChildren(
   parent:Widget,
   children:Array<VNode>,
   platform:Platform,

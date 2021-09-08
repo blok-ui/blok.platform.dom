@@ -1,6 +1,8 @@
 -cp src
 -cp test
 
+-D blok.platform.dom
+
 -lib medic
 # -lib hxnodejs
 # -lib nodom

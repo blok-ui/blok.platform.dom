@@ -1,4 +1,4 @@
-# @install: lix --silent download "gh://github.com/blok-ui/blok.core.html#921acc3d44bfdab9af0b5de27530f80169cdd4a7" into blok.core.html/0.1.1/github/921acc3d44bfdab9af0b5de27530f80169cdd4a7
+# @install: lix --silent download "gh://github.com/blok-ui/blok.core.html#773da17f6cc19786b419223ae945ffb4a0423106" into blok.core.html/0.1.2/github/773da17f6cc19786b419223ae945ffb4a0423106
 -lib blok.core
--cp ${HAXE_LIBCACHE}/blok.core.html/0.1.1/github/921acc3d44bfdab9af0b5de27530f80169cdd4a7/src
--D blok.core.html=0.1.1
+-cp ${HAXE_LIBCACHE}/blok.core.html/0.1.2/github/773da17f6cc19786b419223ae945ffb4a0423106/src
+-D blok.core.html=0.1.2

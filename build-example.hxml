@@ -5,6 +5,8 @@
 -lib blok.core.html
 
 -dce full
+
+-D blok.platform.dom
 -D analyzer-optimize
 -D js-es=6
 -D debug

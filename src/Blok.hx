@@ -8,3 +8,4 @@
 @:noUsing typedef VNode = blok.VNode;
 @:noUsing typedef Html = blok.Html;
 @:noUsing typedef Svg = blok.Svg;
+@:noUsing typedef Hydratable = blok.core.html.Hydratable;
