@@ -41,7 +41,7 @@ function createElementWidget<Attrs:{}>(
   widget.initializeWidget(parent, platform, vnode.key);
   widget.__status = WidgetValid;
   if (vnode.ref != null) registerEffect(() -> vnode.ref(el));
-  if (vnode.children.length > 0) {
+  if (vnode.children != null && vnode.children.length > 0) {
     createChildren(widget, vnode.children, platform, el.firstChild, registerEffect);
   }
   return widget;
@@ -72,8 +72,13 @@ function createComponent<Props:{}>(
   if (vnode == null) return null;
   var comp = vnode.factory(vnode.props);
   comp.initializeWidget(parent, platform, vnode.key);
+
   var manager:ComponentManager = cast comp.getConcreteManager();
-  firstNode.parentNode.insertBefore(manager.marker, firstNode);
+  var parentNode:Node = firstNode == null
+    ? getParentNodeFromParentWidget(parent)
+    : firstNode.parentNode;
+
+  parentNode.insertBefore(manager.marker, firstNode);
   if (comp is Hydratable) {
     var hydratable:Hydratable = cast comp;
     hydratable.hydrate(firstNode, registerEffect);
@@ -83,6 +88,16 @@ function createComponent<Props:{}>(
   registerEffect(comp.runComponentEffects);
   comp.__status = WidgetValid;
   return comp;
+}
+
+function getParentNodeFromParentWidget(parent:Widget):Node {
+  return switch Std.downcast(parent, ElementWidget) {
+    case null: 
+      // @todo: handle cases where parent has no nodes. 
+      parent.getConcreteManager().getLastConcreteChild().parentNode;
+    case el: 
+      @:privateAccess el.el;
+  }
 }
 
 function createChildren(
