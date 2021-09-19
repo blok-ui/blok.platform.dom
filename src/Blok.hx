@@ -8,4 +8,8 @@
 @:noUsing typedef VNode = blok.VNode;
 @:noUsing typedef Html = blok.Html;
 @:noUsing typedef Svg = blok.Svg;
+@:noUsing typedef Suspend = blok.Suspend;
+@:noUsing typedef SuspendableData<T> = blok.SuspendableData<T>;
+@:noUsing typedef Observable<T> = blok.Observable<T>;
 @:noUsing typedef Hydratable = blok.core.html.Hydratable;
+typedef Effect = blok.Effect;
