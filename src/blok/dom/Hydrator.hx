@@ -148,15 +148,15 @@ function hydrateChildren(
   next:()->Void
 ) {
   var children = vnodeChildren.copy();
-  var child = children.shift();
 
   function process() {
-    if (child == null && children.length <= 0) {
+    if (children.length == 0) {
       return next();
     }
+    
+    var child = children.shift();
 
     if (child == null) {
-      child = children.shift();
       return process();
     }
 
@@ -171,12 +171,10 @@ function hydrateChildren(
             registerEffect,
             widget -> {
               if (widget == null) {
-                child = children.shift();
                 return process();  
               }
               parent.__children.add(widget);
               real = widget.getConcreteManager().getLastConcreteChild().nextSibling;
-              child = children.shift();
               process();
             }
           );
@@ -189,7 +187,6 @@ function hydrateChildren(
             registerEffect,
             widget -> {
               parent.__children.add(widget);
-              child = children.shift();
               real = real.nextSibling;
               process();
             }
@@ -204,7 +201,6 @@ function hydrateChildren(
           registerEffect,
           widget -> {
             parent.__children.add(widget);
-            child = children.shift();
             real = real.nextSibling;
             process();
           }
