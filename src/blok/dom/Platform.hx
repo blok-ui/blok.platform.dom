@@ -17,14 +17,22 @@ class Platform extends blok.Platform {
   public static function hydrate(
     el:Element,
     root:VNode,
+    ?next:(widget:Widget)->Void,
     ?initialEffect
   ) {
     var platform = createPlatform();
     var effects = EffectManager.createEffectManager();
-    var root = Hydrator.hydrate(el, root, platform, effects.register);
     if (initialEffect != null) effects.register(initialEffect);
-    effects.dispatch();
-    return root;
+    Hydrator.hydrate(
+      el,
+      root,
+      platform, 
+      effects.register,
+      rootWidget -> {
+        effects.dispatch();
+        next(rootWidget);
+      }
+    );
   }
 
   public inline static function createPlatform() {
