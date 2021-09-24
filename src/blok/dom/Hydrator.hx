@@ -37,7 +37,7 @@ function hydrateComponent<Props:{}>(
   registerEffect:(effect:()->Void)->Void,
   next:(widget:Widget)->Void
 ) {
-  if (vnode == null) return;
+  if (vnode == null) next(null);
   
   var comp = vnode.factory(vnode.props);
   comp.initializeWidget(parent, platform, vnode.key);
@@ -141,17 +141,25 @@ function hydrateElement<Attrs:{}>(
 
 function hydrateChildren(
   parent:Widget,
-  children:Array<VNode>,
+  vnodeChildren:Array<VNode>,
   platform:Platform,
   real:Node,
   registerEffect:(effect:()->Void)->Void,
   next:()->Void
 ) {
+  var children = vnodeChildren.copy();
+  var child = children.shift();
+
   function process() {
-    var child = children.shift();
-    if (child == null) {
+    if (child == null && children.length <= 0) {
       return next();
     }
+
+    if (child == null) {
+      child = children.shift();
+      return process();
+    }
+
     switch Std.downcast(child, VElement) {
       case null: switch Std.downcast(child, VText) {
         case null:
@@ -162,8 +170,13 @@ function hydrateChildren(
             platform,
             registerEffect,
             widget -> {
+              if (widget == null) {
+                child = children.shift();
+                return process();  
+              }
               parent.__children.add(widget);
               real = widget.getConcreteManager().getLastConcreteChild().nextSibling;
+              child = children.shift();
               process();
             }
           );
@@ -176,6 +189,7 @@ function hydrateChildren(
             registerEffect,
             widget -> {
               parent.__children.add(widget);
+              child = children.shift();
               real = real.nextSibling;
               process();
             }
@@ -190,12 +204,14 @@ function hydrateChildren(
           registerEffect,
           widget -> {
             parent.__children.add(widget);
+            child = children.shift();
             real = real.nextSibling;
             process();
           }
         );
     }
   }
+
   process();
 }
 
