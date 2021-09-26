@@ -22,9 +22,7 @@ class Simple extends Component {
 
   @update
   function changeMessage() {
-    return UpdateState({
-      message: 'Changed ${times++}.'
-    });
+    return { message: 'Changed ${times++}.' };
   }
 
   function render() {

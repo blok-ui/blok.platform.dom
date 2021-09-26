@@ -97,8 +97,8 @@ class Model implements State {
 
   @update
   public function add() {
-    if (field.trim().length == 0) return None;
-    return UpdateState({
+    if (field.trim().length == 0) return null;
+    return {
       field: '',
       uid: uid + 1,
       entries: entries.concat([
@@ -109,68 +109,63 @@ class Model implements State {
           completed: false
         })
       ])
-    });
+    };
   }
 
   @update
   public function updateField(value:String) {
-    return UpdateStateSilent({
-      field: value
-    });
+    return { field: value };
   }
 
   @update
   public function editingEntry(id:Int, isEditing:Bool) {
-    if (!entries.exists(e -> e.id == id)) return None;
-    return UpdateState({
+    if (!entries.exists(e -> e.id == id)) return null;
+    return {
       entries: entries.map(e -> if (e.id == id) e.with({ editing: isEditing }) else e)
-    });
+    };
   }
 
   @update
   public function updateEntry(id:Int, description:String) {
-    if (!entries.exists(e -> e.id == id)) return None;
-    return UpdateState({
+    if (!entries.exists(e -> e.id == id)) return null;
+    return {
       entries: entries.map(e -> if (e.id == id) e.with({ description: description }) else e)
-    });
+    };
   }
 
   @update
   public function deleteEntry(id:Int) {
-    if (!entries.exists(e -> e.id == id)) return None;
-    return UpdateState({
+    if (!entries.exists(e -> e.id == id)) return null;
+    return {
       entries: entries.filter(e -> e.id != id)
-    });
+    };
   }
 
   @update
   public function deleteCompleted() {
-    return UpdateState({
+    return {
       entries: entries.filter(e -> !e.completed)
-    });
+    };
   }
 
   @update
   public function check(id:Int, isCompleted:Bool) {
-    if (!entries.exists(e -> e.id == id)) return None;
-    return UpdateState({
+    if (!entries.exists(e -> e.id == id)) return null;
+    return {
       entries: entries.map(e -> if (e.id == id) e.with({ completed: isCompleted }) else e)
-    });
+    };
   }
 
   @update
   public function checkAll(isCompleted:Bool) {
-    return UpdateState({
+    return {
       entries: entries.map(e -> e.with({ completed: isCompleted }))
-    });
+    };
   }
 
   @update
   public function changeVisibility(visibility:Visibility) {
-    if (this.visibility == visibility) return None;
-    return UpdateState({
-      visibility: visibility
-    });
+    return { visibility: visibility };
   }
 }
 
