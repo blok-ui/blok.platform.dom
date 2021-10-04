@@ -4,8 +4,6 @@ import js.html.Text;
 import js.html.Node;
 import js.html.Element;
 import blok.Platform;
-import blok.Suspend;
-import blok.exception.WrappedException;
 import blok.core.html.Hydratable;
 
 function hydrate(
@@ -49,7 +47,7 @@ function hydrateComponent<Props:{}>(
 
   parentNode.insertBefore(manager.marker, firstNode);
 
-  function render() if (comp is Hydratable) {
+  if (comp is Hydratable) {
     var hydratable:Hydratable = cast comp;
     hydratable.hydrate(firstNode, registerEffect, next);
   } else {
@@ -65,19 +63,6 @@ function hydrateComponent<Props:{}>(
         next(comp);
       }
     );
-  }
-  
-  try {
-    render();
-  } catch (e:WrappedException) {
-    switch Std.downcast(e.target, SuspensionRequest) {
-      case null:
-        throw e;
-      case request:
-        request.whenResumed(() -> {
-          render();
-        });
-    }
   }
 }
 
