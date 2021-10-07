@@ -44,12 +44,17 @@ function hydrateComponent<Props:{}>(
   var parentNode:Node = firstNode == null
     ? getParentNodeFromParentWidget(parent)
     : firstNode.parentNode;
+  var finish = () -> {
+    registerEffect(comp.runComponentEffects);
+    comp.__status = WidgetValid;
+    next(comp);
+  };
 
   parentNode.insertBefore(manager.marker, firstNode);
 
   if (comp is Hydratable) {
     var hydratable:Hydratable = cast comp;
-    hydratable.hydrate(firstNode, registerEffect, next);
+    hydratable.hydrate(firstNode, registerEffect, finish);
   } else {
     hydrateChildren(
       comp,
@@ -57,11 +62,7 @@ function hydrateComponent<Props:{}>(
       platform,
       firstNode,
       registerEffect,
-      () -> {
-        registerEffect(comp.runComponentEffects);
-        comp.__status = WidgetValid;
-        next(comp);
-      }
+      finish
     );
   }
 }

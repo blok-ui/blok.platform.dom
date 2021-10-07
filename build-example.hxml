@@ -14,7 +14,7 @@
 
 --each
 
--main todomvc.TodoMvc
+-main todomvc.TodoBlok
 -js dist/todomvc/app.js
 
 --next

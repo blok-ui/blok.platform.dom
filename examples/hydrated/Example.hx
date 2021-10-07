@@ -45,7 +45,7 @@ class CustomHydration extends Component implements Hydratable {
   @prop var content:String;
 
   #if blok.platform.dom
-    public function hydrate(node:js.html.Node, registerEffect:(effect:()->Void)->Void, next:(widget:blok.Widget)->Void) {
+    public function hydrate(node:js.html.Node, registerEffect:(effect:()->Void)->Void, next:()->Void) {
       trace('This is a custom hydrator!');
       trace('It doesn\'t do anything special, but you can see how it might be used.');
       hydrateChildren(
@@ -54,7 +54,7 @@ class CustomHydration extends Component implements Hydratable {
         getPlatform(),
         node,
         registerEffect,
-        () -> next(this)
+        next
       );
     }
   #end
