@@ -53,16 +53,8 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
     return type;
   }
   
-  public function toConcrete() {
+  public function toConcrete():Concrete {
     return [ el ];
-  }
-
-  public function getFirstConcreteChild() {
-    return el;
-  }
-
-  public function getLastConcreteChild() {
-    return el;
   }
 
   override function dispose() {
@@ -94,7 +86,8 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
 
     var previousElement:Element = previousWidget
       .getConcreteManager()
-      .getLastConcreteChild();
+      .toConcrete()
+      .last();
 
     previousElement.after(...children);
   }

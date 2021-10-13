@@ -26,16 +26,8 @@ class TextWidget extends ConcreteWidget {
     return type;
   }
 
-  public function toConcrete() {
+  public function toConcrete():Concrete {
     return [ node ];
-  }
-
-  public function getFirstConcreteChild() {
-    return node;
-  }
-
-  public function getLastConcreteChild() {
-    return node;
   }
 
   public function toString() {

@@ -71,7 +71,7 @@ function getParentNodeFromParentWidget(parent:Widget):Node {
   return switch Std.downcast(parent, ElementWidget) {
     case null: 
       // @todo: handle cases where parent has no nodes. 
-      parent.getConcreteManager().getLastConcreteChild().parentNode;
+      parent.getConcreteManager().toConcrete().last().parentNode;
     case el: 
       @:privateAccess el.el;
   }
@@ -160,7 +160,7 @@ function hydrateChildren(
                 return process();  
               }
               parent.__children.add(widget);
-              real = widget.getConcreteManager().getLastConcreteChild().nextSibling;
+              real = widget.getConcreteManager().toConcrete().last().nextSibling;
               process();
             }
           );

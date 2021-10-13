@@ -23,20 +23,12 @@ class ComponentManager implements ConcreteManager {
     #end
   }
 
-  public function toConcrete() {
-    var concrete = component.getConcreteChildren();
+  public function toConcrete():Concrete {
+    var concrete = component.getChildConcreteManagers();
     var els:Array<Element> = [ cast marker ].concat(
-      concrete.map(c -> c.toConcrete()).flatten()
+      concrete.map(c -> c.toConcrete().toArray()).flatten()
     );
     return els;
-  }
-
-  public function getFirstConcreteChild() {
-    return toConcrete()[0];
-  }
-
-  public function getLastConcreteChild() {
-    return toConcrete().pop();
   }
 
   public function toString() {
@@ -49,10 +41,11 @@ class ComponentManager implements ConcreteManager {
       return;
     }
     
-    var last:Element = getLastConcreteChild();
+    var last:Element = toConcrete().last();
     var children:Array<Node> = cast childWidget
       .getConcreteManager()
-      .toConcrete();
+      .toConcrete()
+      .toArray();
     
     last.after(...children);
   }
@@ -79,7 +72,8 @@ class ComponentManager implements ConcreteManager {
 
     var previousElement:Element = previousWidget
       .getConcreteManager()
-      .getLastConcreteChild();
+      .toConcrete()
+      .last();
 
     previousElement.after(...children);
   }
