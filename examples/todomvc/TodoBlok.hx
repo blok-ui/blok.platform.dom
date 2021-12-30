@@ -174,7 +174,7 @@ class App extends Component {
   function render() {
     return Provider.provide(todos, context -> Html.div({ className: 'todomvc-wrapper' },
       Html.section({ className: 'todoapp' },
-        Html.header({ className: 'header' },
+        Html.header({ className: 'header', role: 'header' },
           Html.h1({}, Html.text('todos')),
           TodoInput.node({ 
             className: 'new-todo',
@@ -248,6 +248,7 @@ class TodoContainer extends Component {
   function render() {
     return Html.section({
       className: 'main',
+      ariaHidden: todos.length == 0,
       style: if (todos.length == 0) 'visibility: hidden' else null
     }, 
       // @todo: toggles

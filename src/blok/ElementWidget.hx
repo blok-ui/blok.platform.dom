@@ -4,6 +4,8 @@ import js.html.Node;
 import js.html.Element;
 import blok.tools.ObjectTools;
 
+using StringTools;
+
 class ElementWidget<Attrs:{}> extends ConcreteWidget {
   final el:Element;
   final type:WidgetType;
@@ -115,6 +117,7 @@ private function updateNodeAttribute(el:Element, name:String, oldValue:Dynamic, 
     case _ if (!isSvg && js.Syntax.code('{0} in {1}', name, el)):
       js.Syntax.code('{0}[{1}] = {2}', el, name, newValue);
     default:
+      name = getHtmlName(name);
       if (name.charAt(0) == 'o' && name.charAt(1) == 'n') {
         var name = name.toLowerCase();
         if (newValue == null) {
@@ -133,4 +136,13 @@ private function updateNodeAttribute(el:Element, name:String, oldValue:Dynamic, 
         el.setAttribute(name, newValue);
       }
   }
+}
+
+// @todo: come up with a way to do this automatically with the @:html
+//        metadata from blok.core.html.
+private function getHtmlName(name:String) {
+  if (name.startsWith('aria')) {
+    return 'aria-' + name.substr(4).toLowerCase();
+  }
+  return name;
 }
