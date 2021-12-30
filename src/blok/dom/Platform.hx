@@ -1,8 +1,10 @@
 package blok.dom;
 
 import js.html.Element;
+import blok.core.DefaultScheduler;
+import blok.ui.*;
 
-class Platform extends blok.Platform {
+class Platform extends blok.ui.Platform {
   public static function mount(
     el:Element,
     root:VNode,
@@ -21,7 +23,7 @@ class Platform extends blok.Platform {
     ?initialEffect
   ) {
     var platform = createPlatform();
-    var effects = EffectManager.createEffectManager();
+    var effects = new EffectManager();
     if (initialEffect != null) effects.register(initialEffect);
     Hydrator.hydrate(
       el,

@@ -3,8 +3,8 @@ package blok.dom;
 import js.html.Text;
 import js.html.Node;
 import js.html.Element;
-import blok.Platform;
-import blok.core.html.Hydratable;
+import blok.ui.*;
+import blok.html.Hydratable;
 
 function hydrate(
   el:Element,
@@ -26,7 +26,7 @@ function hydrate(
   );
 }
 
-@:access(blok.Component)
+@:access(blok.ui.Component)
 function hydrateComponent<Props:{}>(
   firstNode:Node,
   vnode:VComponent<Props>,

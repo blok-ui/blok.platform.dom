@@ -1,8 +1,9 @@
-package blok;
+package blok.ui;
 
 import js.html.Node;
 import js.html.Element;
-import blok.tools.ObjectTools;
+import blok.core.ObjectTools;
+import blok.diff.Differ;
 
 using StringTools;
 

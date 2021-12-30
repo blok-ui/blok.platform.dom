@@ -1,4 +1,4 @@
-package blok;
+package blok.ui;
 
 import js.Browser;
 

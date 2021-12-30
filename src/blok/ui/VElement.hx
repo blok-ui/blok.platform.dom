@@ -1,9 +1,9 @@
-package blok;
+package blok.ui;
 
 import js.Browser;
 import js.html.Node;
-import blok.WidgetType.getUniqueTypeId;
-import blok.core.html.HtmlBaseProps;
+import blok.core.UniqueId;
+import blok.html.HtmlBaseProps;
 
 class VElement<Attrs:{}> implements VNode {
   public static inline final SVG_NS = 'http://www.w3.org/2000/svg';
@@ -12,14 +12,14 @@ class VElement<Attrs:{}> implements VNode {
   public static function getTypeForNode(node:Node) {
     var tag = node.nodeName.toLowerCase();
     if (!types.exists(tag)) {
-      types.set(tag, getUniqueTypeId());
+      types.set(tag, new UniqueId());
     }
     return types.get(tag);
   }
 
   public static function create<Attrs:{}>(tag:String, props):VElement<Attrs> {
     if (!types.exists(tag)) {
-      types.set(tag, getUniqueTypeId());
+      types.set(tag, new UniqueId());
     }
     var isSvg = false;
     var realTag = switch tag.split(':') {

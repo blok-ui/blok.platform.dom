@@ -1,10 +1,10 @@
-package blok;
+package blok.ui;
 
 import js.html.Text;
-import blok.WidgetType.getUniqueTypeId;
+import blok.core.UniqueId;
 
 class TextWidget extends ConcreteWidget {
-  public static final type:WidgetType = getUniqueTypeId();
+  public static final type:WidgetType = new UniqueId();
 
   final node:Text;
 

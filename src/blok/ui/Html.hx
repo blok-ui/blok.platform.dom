@@ -1,10 +1,8 @@
-package blok;
+package blok.ui;
 
-import blok.Key;
-
-@:build(blok.core.html.HtmlBuilder.build(
-  'blok.core.html.HtmlTags', 
-  'blok.VElement',
+@:build(blok.html.HtmlBuilder.build(
+  'blok.html.HtmlTags', 
+  'blok.ui.VElement',
   (_:js.html.Node)
 ))
 class Html {
