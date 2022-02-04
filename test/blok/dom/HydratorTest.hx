@@ -1,15 +1,18 @@
 package blok.dom;
 
 import js.Browser.document;
+import blok.ui.DefaultEffectManager;
 import blok.dom.Hydrator.hydrate;
 
 using Medic;
+using Blok;
 
 class HydratorTest implements TestCase {
   public function new() {}
 
   @:test('Hydration works in a simple case')
-  function testSimpleHydration() {
+  @:test.async
+  function testSimpleHydration(done) {
     var el = document.createElement('div');
     el.setAttribute('id', 'root');
     
@@ -19,12 +22,13 @@ class HydratorTest implements TestCase {
     el.appendChild(child);
     
     var platform = Platform.createPlatform();
-    var effects = EffectManager.createEffectManager();
-    var root = hydrate(el, Html.div({
+    var effects = new DefaultEffectManager();
+    
+    hydrate(el, Html.div({
       className: 'foor'
-    }, Html.text('foo')), platform, effects.register);
-
-    root.getChildren().length.equals(1);
-    trace(root);
+    }, Html.text('foo')), platform, effects.register, (root) -> {
+      root.getChildren().length.equals(1);
+      done();
+    });
   }
 }
