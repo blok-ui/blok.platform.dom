@@ -1,7 +1,7 @@
 package blok.dom;
 
 import js.Browser.document;
-import blok.ui.DefaultEffectManager;
+import blok.ui.Effect;
 import blok.dom.Hydrator.hydrate;
 
 using Medic;
@@ -22,11 +22,11 @@ class HydratorTest implements TestCase {
     el.appendChild(child);
     
     var platform = Platform.createPlatform();
-    var effects = new DefaultEffectManager();
+    var effects = Effect.createTrigger();
     
     hydrate(el, Html.div({
       className: 'foor'
-    }, Html.text('foo')), platform, effects.register, (root) -> {
+    }, Html.text('foo')), platform, effects, (root) -> {
       root.getChildren().length.equals(1);
       done();
     });

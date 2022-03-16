@@ -266,10 +266,17 @@ class TodoInput extends Component {
   @prop var clearOnComplete:Bool;
   @prop var onSubmit:(data:String)->Void;
   @prop var onCancel:()->Void;
+  @prop var isEditing:Bool = false;
+  var ref:js.html.InputElement;
 
   @update
   function updateValue(value) {
     return { value: value }
+  }
+
+  @effect
+  function maybeFocus() {
+    if (isEditing) ref.focus();
   }
 
   function render() {
@@ -279,6 +286,7 @@ class TodoInput extends Component {
       autofocus: true,
       value: value,
       name: className,
+      ref: node -> ref = cast node,
       oninput: e -> {
         var target:InputElement = cast e.target;
         updateValue(target.value);
@@ -338,6 +346,7 @@ class TodoView extends Component {
         className: 'edit',
         value: todo.description,
         clearOnComplete: false,
+        isEditing: todo.isEditing,
         onCancel: () -> todos.clearEditingTodos(),
         onSubmit: data -> todos.updateTodo(todo.id, data)
       })

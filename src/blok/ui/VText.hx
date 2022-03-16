@@ -13,17 +13,17 @@ class VText implements VNode {
     this.props = text;
   }
 
-  public function createWidget(?parent:Widget, platform:Platform, registerEffect:(effect:()->Void)->Void):Widget {
+  public function createWidget(?parent:Widget, platform:Platform, effects:Effect):Widget {
     var widget = new TextWidget(Browser.document.createTextNode(props));
     widget.initializeWidget(parent, platform, key);
-    widget.performUpdate(registerEffect);
+    widget.performUpdate(effects);
     return widget;
   }
 
-  public function updateWidget(widget:Widget, registerEffect:(effect:()->Void)->Void):Widget {
+  public function updateWidget(widget:Widget, effects:Effect):Widget {
     var text:TextWidget = cast widget;
     text.setText(props);
-    text.performUpdate(registerEffect);
+    text.performUpdate(effects);
     return widget;
   }
 }

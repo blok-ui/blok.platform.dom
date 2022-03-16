@@ -10,7 +10,7 @@ function hydrate(
   el:Element,
   vnode:VNode,
   platform:Platform,
-  registerEffect:(effect:()->Void)->Void,
+  effects:Effect,
   next:(root:Widget)->Void
 ) {
   var root = new ElementWidget(el, VElement.getTypeForNode(el), {}, []);
@@ -21,7 +21,7 @@ function hydrate(
     [ vnode ],
     platform,
     el.firstChild,
-    registerEffect,
+    effects,
     () -> next(root)
   );
 }
@@ -32,7 +32,7 @@ function hydrateComponent<Props:{}>(
   vnode:VComponent<Props>,
   parent:Widget,
   platform:Platform,
-  registerEffect:(effect:()->Void)->Void,
+  effects:Effect,
   next:(widget:Widget)->Void
 ) {
   if (vnode == null) next(null);
@@ -45,7 +45,7 @@ function hydrateComponent<Props:{}>(
     ? getParentNodeFromParentWidget(parent)
     : firstNode.parentNode;
   var finish = () -> {
-    registerEffect(comp.runComponentEffects);
+    effects.register(comp.runComponentEffects);
     comp.__status = WidgetValid;
     next(comp);
   };
@@ -54,14 +54,14 @@ function hydrateComponent<Props:{}>(
 
   if (comp is Hydratable) {
     var hydratable:Hydratable = cast comp;
-    hydratable.hydrate(firstNode, registerEffect, finish);
+    hydratable.hydrate(firstNode, effects, finish);
   } else {
     hydrateChildren(
       comp,
       comp.__performRender().toArray(),
       platform,
       firstNode,
-      registerEffect,
+      effects,
       finish
     );
   }
@@ -82,7 +82,7 @@ function hydrateText(
   vnode:VText,
   parent:Widget,
   platform:Platform,
-  registerEffect:(effect:()->Void)->Void,
+  effects:Effect,
   next: (widget:Widget)->Void
 ) {
   #if debug assertIsTextNode(text); #end
@@ -97,7 +97,7 @@ function hydrateElement<Attrs:{}>(
   vnode:VElement<Attrs>,
   parent:Widget,
   platform:Platform,
-  registerEffect:(effect:()->Void)->Void,
+  effects:Effect,
   next:(widget:Widget)->Void
 ) {
   #if debug assertIsElement(el, vnode.tag); #end
@@ -110,14 +110,14 @@ function hydrateElement<Attrs:{}>(
   );
   widget.initializeWidget(parent, platform, vnode.key);
   widget.__status = WidgetValid;
-  if (vnode.ref != null) registerEffect(() -> vnode.ref(el));
+  if (vnode.ref != null) effects.register(() -> vnode.ref(el));
   if (vnode.children != null && vnode.children.length > 0) {
     hydrateChildren(
       widget,
       vnode.children,
       platform,
       el.firstChild,
-      registerEffect,
+      effects,
       () -> next(widget)
     );
   } else {
@@ -130,7 +130,7 @@ function hydrateChildren(
   vnodeChildren:Array<VNode>,
   platform:Platform,
   real:Node,
-  registerEffect:(effect:()->Void)->Void,
+  effects:Effect,
   next:()->Void
 ) {
   var children = vnodeChildren.copy();
@@ -154,7 +154,7 @@ function hydrateChildren(
             cast child,
             parent,
             platform,
-            registerEffect,
+            effects,
             widget -> {
               if (widget == null) {
                 return process();  
@@ -170,7 +170,7 @@ function hydrateChildren(
             text,
             parent,
             platform,
-            registerEffect,
+            effects,
             widget -> {
               parent.__children.add(widget);
               real = real.nextSibling;
@@ -184,7 +184,7 @@ function hydrateChildren(
           element,
           parent,
           platform,
-          registerEffect,
+          effects,
           widget -> {
             parent.__children.add(widget);
             real = real.nextSibling;

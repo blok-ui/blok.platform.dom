@@ -21,9 +21,9 @@ class ElementWidget<Attrs:{}> extends ConcreteWidget {
     this.ref = ref;
   }
 
-  public function __performUpdate(registerEffect:(effect:()->Void)->Void):Void {
-    Differ.diffChildren(this, children, __platform, registerEffect);
-    if (ref != null) registerEffect(ref.bind(el));
+  public function __performUpdate(effects:Effect):Void {
+    Differ.diffChildren(this, children, __platform, effects);
+    if (ref != null) effects.register(ref.bind(el));
   }
 
   override function __initHooks() {

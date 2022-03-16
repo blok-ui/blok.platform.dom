@@ -50,21 +50,21 @@ class VElement<Attrs:{}> implements VNode {
     this.key = props.key;
   }
 
-  public function createWidget(?parent:Widget, platform:Platform, registerEffect:(effect:()->Void)->Void):Widget {
+  public function createWidget(?parent:Widget, platform:Platform, effects:Effect):Widget {
     var el = isSvg 
       ? Browser.document.createElementNS(SVG_NS, tag)
       : Browser.document.createElement(tag);
     var native = new ElementWidget(el, type, props, children, ref);
     native.initializeWidget(parent, platform, key);
-    native.performUpdate(registerEffect);
+    native.performUpdate(effects);
     return native;
   }
 
-  public function updateWidget(widget:Widget, registerEffect:(effect:()->Void)->Void):Widget {
+  public function updateWidget(widget:Widget, effects:Effect):Widget {
     var native:ElementWidget<Attrs> = cast widget;
     native.updateAttrs(props);
     native.setChildren(children);
-    native.performUpdate(registerEffect);
+    native.performUpdate(effects);
     return widget;
   }
 }

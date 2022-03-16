@@ -23,13 +23,13 @@ class Platform extends blok.ui.Platform {
     ?initialEffect
   ) {
     var platform = createPlatform();
-    var effects = platform.createEffectManager();
+    var effects = Effect.createTrigger();
     if (initialEffect != null) effects.register(initialEffect);
     Hydrator.hydrate(
       el,
       root,
       platform, 
-      effects.register,
+      effects,
       rootWidget -> {
         effects.dispatch();
         next(rootWidget);
