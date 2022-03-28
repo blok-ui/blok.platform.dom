@@ -72,6 +72,7 @@ class TodoStore implements State {
 
   @update
   public function addTodo(description:String) {
+    if (description == null) return {};
     return { 
       uid: uid + 1,
       todos: todos.concat([ new Todo({
@@ -252,9 +253,14 @@ class TodoContainer extends Component {
       style: if (todos.length == 0) 'visibility: hidden' else null
     }, 
       // @todo: toggles
-      Html.ul({ className: 'todo-list' }, ...[ for (todo in todos) 
-        TodoView.node({ todo: todo }, todo.id)
-      ])
+      Html.ul({ className: 'todo-list' },
+        // Note: using Fragment here entirely to test it.
+        //       It is not required, and is even a bad idea,
+        //       but I want to make sure it updates correctly.
+        Html.fragment(...[ for (todo in todos) 
+          TodoView.node({ todo: todo }, todo.id)
+        ])
+      )
     );
   }
 }
@@ -284,7 +290,7 @@ class TodoInput extends Component {
       className: className,
       placeholder: 'What needs doing?',
       autofocus: true,
-      value: value,
+      value: value == null ? '' : value,
       name: className,
       ref: node -> ref = cast node,
       oninput: e -> {

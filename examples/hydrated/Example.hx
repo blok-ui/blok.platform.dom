@@ -1,7 +1,6 @@
 package hydrated;
 
 import js.Browser;
-import blok.dom.Hydrator.hydrateChildren;
 
 using Blok;
 
@@ -9,14 +8,13 @@ function main() {
   var data:ObservableResult<String, String> = new ObservableResult(Suspended);
   Platform.hydrate(
     Browser.document.getElementById('root'),
-    CustomHydration.node({ content: 'data' }),
-    // Simple.node({ message: 'Ok!', content: data }),
-    root -> trace('done')
+    Simple.node({ content: 'foo' })
+    // root -> trace('done')
   );
   data.resume('Custom!');
 }
 
-// class Simple extends Component {
+// class AsyncLoading extends Component {
 //   @prop var message:String;
 //   @prop var content:ObservableResult<String, String>;
 //   var times:Int = 0;
@@ -33,7 +31,7 @@ function main() {
 //       error: e -> Html.text(e),
 //       build: data -> Html.div({}, 
 //         Html.text(message),
-//         CustomHydration.node({ content: data }),
+//         Simple.node({ content: data }),
 //         Html.button({
 //           onclick: _ -> changeMessage()
 //         }, Html.text('Change'))
@@ -42,25 +40,21 @@ function main() {
 //   }
 // }
 
-class CustomHydration extends Component implements Hydratable {
+class Simple extends Component {
   @prop var content:String;
+  var times:Int = 1;
 
-  #if blok.platform.dom
-    public function hydrate(node:js.html.Node, effects:Effect, next:()->Void) {
-      trace('This is a custom hydrator!');
-      trace('It doesn\'t do anything special, but you can see how it might be used.');
-      hydrateChildren(
-        this,
-        __performRender().toArray(),
-        getPlatform(),
-        node,
-        effects,
-        next
-      );
-    }
-  #end
-  
+  @update
+  function changeContent() {
+    return { content: 'Changed ${times++}.' };
+  }
+
   function render() {
-    return Html.div({}, Html.text(content));
+    return Html.div({}, 
+      Html.text(content),
+      Html.button({
+        onclick: _ -> changeContent()
+      }, Html.text('Change'))
+    );
   }
 }

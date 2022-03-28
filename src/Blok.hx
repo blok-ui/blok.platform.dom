@@ -6,9 +6,8 @@
 @:noUsing typedef State = blok.state.State;
 @:noUsing typedef Observable<T> = blok.state.Observable<T>;
 @:noUsing typedef ObservableResult<Data, Error> = blok.state.ObservableResult<Data, Error>;
-@:noUsing typedef VNode = blok.ui.VNode;
-@:noUsing typedef Hydratable = blok.html.Hydratable;
+@:noUsing typedef Widget = blok.ui.Widget;
 @:noUsing typedef Component = blok.ui.Component;
 @:noUsing typedef Html = blok.ui.Html;
 @:noUsing typedef Svg = blok.ui.Svg;
-typedef Effect = blok.ui.Effect;
+@:noUsing typedef Effects = blok.ui.Effects;
