@@ -1,9 +1,7 @@
 package blok.ui;
 
 import js.html.Text;
-import blok.ui.Widget;
 import blok.core.UniqueId;
-import blok.ui.*;
 
 class HtmlTextWidget extends ObjectWidget {
   static final type = new UniqueId();

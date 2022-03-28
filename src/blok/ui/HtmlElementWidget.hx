@@ -4,7 +4,6 @@ import js.Browser;
 import js.html.Node;
 import blok.core.UniqueId;
 import blok.core.ObjectTools;
-import blok.ui.*;
 import blok.html.HtmlBaseProps;
 
 class HtmlElementWidget<Attrs:{}> extends ObjectWidget {
