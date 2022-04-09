@@ -46,7 +46,7 @@ class HtmlElementWidget<Attrs:{}> extends ObjectWidget {
   }
 
   public function createElement():Element {
-    return new HtmlElementElement(this);
+    return new ObjectWithChildrenElement(this);
   }
 
   public function getChildren():Array<Widget> {
@@ -58,6 +58,7 @@ class HtmlElementWidget<Attrs:{}> extends ObjectWidget {
       ? Browser.document.createElementNS(Svg.NAMESPACE, tag)
       : Browser.document.createElement(tag);
     updateObject(el);
+    if (ref != null) ref(el);
     return el;
   }
 
@@ -68,24 +69,5 @@ class HtmlElementWidget<Attrs:{}> extends ObjectWidget {
     ObjectTools.diffObject(oldAttrs, attrs, HtmlTools.updateNodeAttribute.bind(el));
 
     return el;
-  }
-}
-
-class HtmlElementElement extends ObjectWithChildrenElement {
-  override function performBuild(previousWidget:Null<Widget>) {
-    super.performBuild(previousWidget);
-    maybeHandleRef();
-  }
-
-  override function performHydrate(cursor:HydrationCursor) {
-    super.performHydrate(cursor);
-    maybeHandleRef();
-  }
-
-  inline function maybeHandleRef() {
-    var el:HtmlElementWidget<Dynamic> = cast widget;
-    if (el.ref != null) platform.scheduleEffects(effects -> {
-      effects.register(() -> el.ref(getObject()));
-    });
   }
 }

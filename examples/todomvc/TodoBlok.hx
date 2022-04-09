@@ -11,7 +11,7 @@ using Lambda;
 function main() {
   Platform.mount(
     js.Browser.document.getElementById('root'),
-    App.node({ todos: TodoStore.load() })
+    App.of({ todos: TodoStore.load() })
   );
 }
 
@@ -177,47 +177,47 @@ class App extends Component {
       Html.section({ className: 'todoapp' },
         Html.header({ className: 'header', role: 'header' },
           Html.h1({}, Html.text('todos')),
-          TodoInput.node({ 
+          TodoInput.of({ 
             className: 'new-todo',
             value: '',
             clearOnComplete: true,
             onCancel: () -> null,
             onSubmit: data -> todos.addTodo(data)
-          }),
-          TodoStore.observe(context, todos -> TodoContainer.node({
-            todos: todos.getVisibleTodos()
-          })),
-          TodoStore.observe(context, todos -> {
-            var todosCompleted = todos.todos.filter(todo -> todo.isCompleted).length;
-            var todosLeft = todos.todos.length - todosCompleted;
-            return Html.footer({
-              className: 'footer',
-              style: if (todos.todos.length == 0) 'display: none' else null
-            },
-              Html.span({ className: 'todo-count' },
-                Html.strong({},
-                  Html.text(switch todosLeft {
-                    case 1: '${todosLeft} item left';
-                    default: '${todosLeft} items left';
-                  })
-                )
-              ),
-              Html.ul({ className: 'filters' },
-                visibilityControl('#/', All, todos.visibility, todos),
-                visibilityControl('#/active', Active, todos.visibility, todos),
-                visibilityControl('#/completed', Completed, todos.visibility, todos)
-              ),
-              Html.button(
-                {
-                  className: 'clear-completed',
-                  style: if (todosCompleted == 0) 'visibility: hidden' else null,
-                  onclick: _ -> todos.removeCompletedTodos()
-                },
-                Html.text('Clear completed (${todosCompleted})') 
-              )
-            );
           })
-        )
+        ),
+        TodoStore.observe(context, todos -> TodoContainer.of({
+          todos: todos.getVisibleTodos()
+        })),
+        TodoStore.observe(context, todos -> {
+          var todosCompleted = todos.todos.filter(todo -> todo.isCompleted).length;
+          var todosLeft = todos.todos.length - todosCompleted;
+          return Html.footer({
+            className: 'footer',
+            style: if (todos.todos.length == 0) 'display: none' else null
+          },
+            Html.span({ className: 'todo-count' },
+              Html.strong({},
+                Html.text(switch todosLeft {
+                  case 1: '${todosLeft} item left';
+                  default: '${todosLeft} items left';
+                })
+              )
+            ),
+            Html.ul({ className: 'filters' },
+              visibilityControl('#/', All, todos.visibility, todos),
+              visibilityControl('#/active', Active, todos.visibility, todos),
+              visibilityControl('#/completed', Completed, todos.visibility, todos)
+            ),
+            Html.button(
+              {
+                className: 'clear-completed',
+                style: if (todosCompleted == 0) 'visibility: hidden' else null,
+                onclick: _ -> todos.removeCompletedTodos()
+              },
+              Html.text('Clear completed (${todosCompleted})') 
+            )
+          );
+        })
       )
     ));
   }
@@ -258,7 +258,7 @@ class TodoContainer extends Component {
         //       It is not required, and is even a bad idea,
         //       but I want to make sure it updates correctly.
         Html.fragment(...[ for (todo in todos) 
-          TodoView.node({ todo: todo }, todo.id)
+          TodoView.of({ todo: todo }, todo.id)
         ])
       )
     );
@@ -280,9 +280,18 @@ class TodoInput extends Component {
     return { value: value }
   }
 
-  @effect
+  @after
   function maybeFocus() {
-    if (isEditing) ref.focus();
+    if (isEditing) {
+      // @todo: This is clunky, but it ensures we
+      //        don't run `focus` until the RootElement
+      //        has finished rebuilding. We'll add a
+      //        better API soon.
+      platform
+        .getRootElement()
+        .getObservable()
+        .next(_ -> ref.focus());
+    }
   }
 
   function render() {
@@ -348,7 +357,7 @@ class TodoView extends Component {
           onclick: _ ->  todos.removeTodo(todo.id)
         })
       ),
-      TodoInput.node({
+      TodoInput.of({
         className: 'edit',
         value: todo.description,
         clearOnComplete: false,

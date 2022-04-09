@@ -8,7 +8,7 @@ function main() {
   var data:ObservableResult<String, String> = new ObservableResult(Suspended);
   Platform.hydrate(
     Browser.document.getElementById('root'),
-    Simple.node({ content: 'foo' })
+    Simple.of({ content: 'foo' })
     // root -> trace('done')
   );
   data.resume('Custom!');

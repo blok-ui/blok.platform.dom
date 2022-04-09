@@ -10,4 +10,3 @@
 @:noUsing typedef Component = blok.ui.Component;
 @:noUsing typedef Html = blok.ui.Html;
 @:noUsing typedef Svg = blok.ui.Svg;
-@:noUsing typedef Effects = blok.ui.Effects;
