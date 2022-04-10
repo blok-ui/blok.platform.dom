@@ -27,7 +27,7 @@ class Platform extends blok.ui.Platform {
     } else {
       var parent:Element = findParent();
       Debug.assert(parent != null);
-      parent.appendChild(el);
+      parent.prepend(el);
     }
   }
 
